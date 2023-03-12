@@ -14,12 +14,7 @@ CustomInstallation=Instalação personalizada
 AppCoreFiles=Ficheiros principais do WinMerge
 Filters=Filtros
 Plugins=Plugins
-Frhed=Frhed(Editor hex gratuito)
-WinIMerge=WinIMerge (Dividir/Juntar Imagens)
-WinWebDiff=WinWebDiff(Web Page Diff)
-ArchiveSupport=Suporte de ficheiros
 ShellExtension32bit=Extensão Shell WinMerge 32 bits
-Commands=Pacote GnuWin32 para Windows/HTML Tidy/jq
 
 ;Localization Components
 Languages=Idiomas
@@ -71,9 +66,9 @@ AddToPath=&Criar pasta do WinMerge no caminho do sistema
 ThreeWayMergeWizardPageCaption=3-Combinação de modos
 ThreeWayMergeWizardPageDescription=Utilizar o WinMerge como ferramenta de três vias para TortoiseSVN/Git?
 RegisterWinMergeAs3WayMergeTool=Registar o WinMerge como ferramenta de combinação de três vias
-MergeAtRightPane=Combinar na janela direita
+MergeAtRightPane=Combinar na janela da direita
 MergeAtCenterPane=Combinar na janela do meio
-MergeAtLeftPane=Combinar na janela esquerda
+MergeAtLeftPane=Combinar na janela da esquerda
 AutoMergeAtStartup=Combinar automaticamente no arranque
 
 ;Icon Labels
@@ -83,6 +78,7 @@ ViewStartMenuFolder=&Ver a pasta do WinMerge do Menu Iniciar
 
 ;Code Dialogs
 DeletePreviousStartMenu=O Assistente de Instalação detetou que alterou a localização de "%s" para "%s". Deseja eliminar a pasta anterior do Menu Iniciar?
+ExplorerNeedsRestart=É necessário reiniciar o Explorador para atualizar a extensão do contexto do WinMerge. Deseja reiniciar o Explorador?
 
 ; Project file description
 ProjectFileDesc=Ficheiro do projeto WinMerge

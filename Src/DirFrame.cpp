@@ -90,7 +90,7 @@ END_MESSAGE_MAP()
  */
 int CDirFrame::OnCreate(LPCREATESTRUCT lpCreateStruct) 
 {
-	if (CMDIChildWnd::OnCreate(lpCreateStruct) == -1)
+	if (__super::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
 	EnableDocking(CBRS_ALIGN_TOP);
@@ -135,7 +135,7 @@ int CDirFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 /**
  * @brief Set statusbar text
  */
-void CDirFrame::SetStatus(LPCTSTR szStatus)
+void CDirFrame::SetStatus(const tchar_t* szStatus)
 {
 	m_wndStatusBar.SetPaneText(0, szStatus);
 }
@@ -153,7 +153,7 @@ void CDirFrame::SetCompareMethodStatusDisplay(int nCompMethod)
  * @brief Set active filter name to statusbar
  * @param [in] szFilter Filtername to show
  */
-void CDirFrame::SetFilterStatusDisplay(LPCTSTR szFilter)
+void CDirFrame::SetFilterStatusDisplay(const tchar_t* szFilter)
 {
 	m_wndStatusBar.SetPaneText(PANE_FILTER, szFilter);
 }
@@ -163,7 +163,7 @@ void CDirFrame::SetFilterStatusDisplay(LPCTSTR szFilter)
  */
 void CDirFrame::ActivateFrame(int nCmdShow) 
 {
-	CMergeFrameCommon::ActivateFrame(nCmdShow);
+	__super::ActivateFrame(nCmdShow);
 }
 
 /**
@@ -175,7 +175,7 @@ void CDirFrame::UpdateResources()
 
 void CDirFrame::OnClose() 
 {	
-	CMDIChildWnd::OnClose();
+	__super::OnClose();
 }
 
 /**
@@ -188,12 +188,12 @@ BOOL CDirFrame::DestroyWindow()
 	GetDockState(dockState);
 	dockState.SaveState(_T("Settings-DirFrame"));
 	SaveWindowState();
-	return CMDIChildWnd::DestroyWindow();
+	return __super::DestroyWindow();
 }
 
 void CDirFrame::OnSize(UINT nType, int cx, int cy) 
 {
-	CMDIChildWnd::OnSize(nType, cx, cy);
+	__super::OnSize(nType, cx, cy);
 	
 	m_wndFilePathBar.Resize();
 }

@@ -1129,6 +1129,9 @@ msgstr "Умножи називе датотека"
 msgid "Copy Items To Clip&board"
 msgstr ""
 
+msgid "Copy All Di&splayed Columns"
+msgstr ""
+
 #, c-format
 msgid "&Zip"
 msgstr "&Зип"
@@ -1172,9 +1175,8 @@ msgstr "Умножи на&зив датотеке"
 msgid "&Edit Caption"
 msgstr ""
 
-#, c-format
-msgid "&Select..."
-msgstr "&Изабери..."
+msgid "&Open..."
+msgstr ""
 
 msgid "Unpacker Settings"
 msgstr ""
@@ -1186,6 +1188,10 @@ msgstr "<Ништа>"
 #, c-format
 msgid "<Automatic>"
 msgstr "<Аутоматски>"
+
+#, c-format
+msgid "&Select..."
+msgstr "&Изабери..."
 
 #, c-format
 msgid "Prediffer Settings"
@@ -1339,6 +1345,9 @@ msgstr "Преглед..."
 msgid " Folder: Filter"
 msgstr ""
 
+msgid " File: Prediffer Plugin"
+msgstr ""
+
 msgid " File: Unpacker Plugin"
 msgstr ""
 
@@ -1396,6 +1405,9 @@ msgstr ""
 #, c-format
 msgid "Op&en-dialog Auto-Completion:"
 msgstr "Отвори дијалог самодовршења:"
+
+msgid "Auto-&reload modified files:"
+msgstr ""
 
 #, c-format
 msgid "Language:"
@@ -2355,12 +2367,15 @@ msgid "Explorer"
 msgstr "Истраживач"
 
 #, c-format
+msgid "&Add to context menu"
+msgstr "Додај у 'изборни оквир'"
+
+#, c-format
 msgid "E&nable advanced menu"
 msgstr "Омогући &напредни избор"
 
-#, c-format
-msgid "&Add to context menu"
-msgstr "Додај у 'изборни оквир'"
+msgid "Enable &Compare As menu"
+msgstr ""
 
 #, c-format
 msgid "&Register shell extension"
@@ -2412,7 +2427,7 @@ msgstr ""
 msgid "Threshold for switching to &binary compare (MB):"
 msgstr ""
 
-msgid "\n&Number of compare threads (a negative value implies addition of the number of available CPU cores):"
+msgid "&Number of CPU cores to use:"
 msgstr ""
 
 msgid "&CSV File Patterns:"
@@ -4271,6 +4286,9 @@ msgstr ""
 msgid "We&bpage"
 msgstr ""
 
+msgid "W&rap Text"
+msgstr ""
+
 msgid "Frhed is not installed."
 msgstr ""
 
@@ -4467,6 +4485,12 @@ msgstr "Дозволи само једну покренуту надлежнос
 msgid "Allow only one instance to run and wait for the instance to terminate"
 msgstr ""
 
+msgid "Only on window activated"
+msgstr ""
+
+msgid "Immediately"
+msgstr ""
+
 msgid "Al&l"
 msgstr ""
 
@@ -4476,7 +4500,7 @@ msgstr ""
 msgid "Content Extraction"
 msgstr ""
 
-msgid "Visualization"
+msgid "Preview"
 msgstr ""
 
 msgid "Data Query"
@@ -4557,6 +4581,9 @@ msgstr ""
 msgid "Ignore TSV Fields"
 msgstr ""
 
+msgid "Ignore Leading Line Numbers"
+msgstr ""
+
 msgid "Apply Prediff Substitution Filters"
 msgstr ""
 
@@ -4572,7 +4599,13 @@ msgstr ""
 msgid "Prettify YAML"
 msgstr ""
 
-msgid "Visualize Graphviz"
+msgid "Preview Graphviz"
+msgstr ""
+
+msgid "Preview Markdown"
+msgstr ""
+
+msgid "Preview PlantUML"
 msgstr ""
 
 msgid "Query CSV Data..."
@@ -4665,7 +4698,13 @@ msgstr ""
 msgid "YAML Prettier with yq command. \r\nArguments: Filter or command line options passed to the yq command."
 msgstr ""
 
-msgid "Graphviz Visualizer. \r\nArguments: Command line options passed to the dot command."
+msgid "Graphviz Previewer. \r\nArguments: Command line options passed to the dot command."
+msgstr ""
+
+msgid "Markdown Previewer. \r\nArguments: Command line options passed to the md2html command."
+msgstr ""
+
+msgid "PlantUML Previewer. \r\nArguments: Command line options passed to the plantuml.jar command."
 msgstr ""
 
 msgid "CSV Querier with q command. \r\nArguments: SQL statement or command line options passed to the q command."

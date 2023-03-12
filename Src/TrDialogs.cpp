@@ -12,7 +12,7 @@ void StaticDlgUtils::WildcardRemoveDuplicatePatterns(String& patterns)
 	while ((j = patterns.find_first_of(L"; ", i)) != String::npos &&
 		(k = patterns.find_last_of(L"; ", j) + 1) != patterns.length())
 	{
-		TCHAR const sep = patterns[j];
+		tchar_t const sep = patterns[j];
 		patterns[j] = L'\0';
 		if (PathMatchSpec(patterns.c_str() + i, patterns.c_str() + k))
 		{
@@ -29,21 +29,21 @@ void StaticDlgUtils::WildcardRemoveDuplicatePatterns(String& patterns)
 BOOL CTrDialog::OnInitDialog()
 {
 	theApp.TranslateDialog(m_hWnd);
-	CDialog::OnInitDialog();
+	__super::OnInitDialog();
 	return TRUE;
 }
 
 BOOL CTrPropertyPage::OnInitDialog()
 {
 	theApp.TranslateDialog(m_hWnd);
-	CPropertyPage::OnInitDialog();
+	__super::OnInitDialog();
 	return TRUE;
 }
 
 BOOL CTrDialogBar::Create(CWnd* pParentWnd, LPCTSTR lpszTemplateName,
 	UINT nStyle, UINT nID)
 {
-	BOOL bSucceeded = CDialogBar::Create(pParentWnd, lpszTemplateName, nStyle, nID);
+	BOOL bSucceeded = __super::Create(pParentWnd, lpszTemplateName, nStyle, nID);
 	if (bSucceeded)
 		theApp.TranslateDialog(m_hWnd);
 	return bSucceeded;
@@ -52,7 +52,7 @@ BOOL CTrDialogBar::Create(CWnd* pParentWnd, LPCTSTR lpszTemplateName,
 BOOL CTrDialogBar::Create(CWnd* pParentWnd, UINT nIDTemplate,
 	UINT nStyle, UINT nID)
 {
-	BOOL bSucceeded = CDialogBar::Create(pParentWnd, nIDTemplate, nStyle, nID);
+	BOOL bSucceeded = __super::Create(pParentWnd, nIDTemplate, nStyle, nID);
 	if (bSucceeded)
 		theApp.TranslateDialog(m_hWnd);
 	return bSucceeded;

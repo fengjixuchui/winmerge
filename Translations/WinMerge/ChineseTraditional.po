@@ -1139,6 +1139,9 @@ msgstr "複製檔名 (&F)"
 msgid "Copy Items To Clip&board"
 msgstr "複製項目到剪貼簿 (&B)"
 
+msgid "Copy All Di&splayed Columns"
+msgstr ""
+
 #, c-format
 msgid "&Zip"
 msgstr "Zip (&Z)"
@@ -1182,9 +1185,8 @@ msgstr "複製檔名 (&F)"
 msgid "&Edit Caption"
 msgstr ""
 
-#, c-format
-msgid "&Select..."
-msgstr "選取 (&S)..."
+msgid "&Open..."
+msgstr ""
 
 msgid "Unpacker Settings"
 msgstr "解壓縮程式設定"
@@ -1196,6 +1198,10 @@ msgstr "<無>"
 #, c-format
 msgid "<Automatic>"
 msgstr "<自動>"
+
+#, c-format
+msgid "&Select..."
+msgstr "選取 (&S)..."
 
 #, c-format
 msgid "Prediffer Settings"
@@ -1357,6 +1363,9 @@ msgstr "瀏覽..."
 msgid " Folder: Filter"
 msgstr ""
 
+msgid " File: Prediffer Plugin"
+msgstr ""
+
 #, c-format
 msgid " File: Unpacker Plugin"
 msgstr ""
@@ -1418,6 +1427,9 @@ msgstr ""
 #, c-format
 msgid "Op&en-dialog Auto-Completion:"
 msgstr "「開啟」對話方塊之自動完成 (&E)："
+
+msgid "Auto-&reload modified files:"
+msgstr ""
 
 #, c-format
 msgid "Language:"
@@ -2388,12 +2400,15 @@ msgid "Explorer"
 msgstr "檔案總管"
 
 #, c-format
+msgid "&Add to context menu"
+msgstr "加到右鍵選單 (&A)"
+
+#, c-format
 msgid "E&nable advanced menu"
 msgstr "啟用進階選單 (&N)"
 
-#, c-format
-msgid "&Add to context menu"
-msgstr "加到右鍵選單 (&A)"
+msgid "Enable &Compare As menu"
+msgstr ""
 
 #, c-format
 msgid "&Register shell extension"
@@ -2445,12 +2460,8 @@ msgstr ""
 msgid "Threshold for switching to &binary compare (MB):"
 msgstr ""
 
-msgid ""
-"\n"
-"&Number of compare threads (a negative value implies addition of the number of available CPU cores):"
+msgid "&Number of CPU cores to use:"
 msgstr ""
-"\n"
-"比較進程數 (&N)(負數表示附加可用的CPU內核數量)："
 
 msgid "&CSV File Patterns:"
 msgstr "&CSV 檔案模式："
@@ -4452,6 +4463,9 @@ msgstr "開啟自動最大寬度 (&A)"
 msgid "We&bpage"
 msgstr ""
 
+msgid "W&rap Text"
+msgstr ""
+
 msgid "Frhed is not installed."
 msgstr "Frhed 未安裝。"
 
@@ -4654,6 +4668,12 @@ msgstr "不能同時執行一個以上本程式"
 msgid "Allow only one instance to run and wait for the instance to terminate"
 msgstr ""
 
+msgid "Only on window activated"
+msgstr ""
+
+msgid "Immediately"
+msgstr ""
+
 msgid "Al&l"
 msgstr "全部 (&L)"
 
@@ -4663,8 +4683,8 @@ msgstr "美化"
 msgid "Content Extraction"
 msgstr "擷取內容"
 
-msgid "Visualization"
-msgstr "視覺化"
+msgid "Preview"
+msgstr ""
 
 msgid "Data Query"
 msgstr "資料查詢"
@@ -4744,6 +4764,9 @@ msgstr "忽略 CSV 欄位"
 msgid "Ignore TSV Fields"
 msgstr "忽略 TSV 欄位"
 
+msgid "Ignore Leading Line Numbers"
+msgstr ""
+
 msgid "Apply Prediff Substitution Filters"
 msgstr ""
 
@@ -4759,8 +4782,14 @@ msgstr "美化 XML"
 msgid "Prettify YAML"
 msgstr "美化 YAML"
 
-msgid "Visualize Graphviz"
-msgstr "Graphviz 視覺化"
+msgid "Preview Graphviz"
+msgstr ""
+
+msgid "Preview Markdown"
+msgstr ""
+
+msgid "Preview PlantUML"
+msgstr ""
 
 msgid "Query CSV Data..."
 msgstr "查詢 CSV 資料..."
@@ -4889,9 +4918,13 @@ msgid ""
 "Arguments: Filter or command line options passed to the yq command."
 msgstr ""
 
-msgid ""
-"Graphviz Visualizer. \r\n"
-"Arguments: Command line options passed to the dot command."
+msgid "Graphviz Previewer. \r\nArguments: Command line options passed to the dot command."
+msgstr ""
+
+msgid "Markdown Previewer. \r\nArguments: Command line options passed to the md2html command."
+msgstr ""
+
+msgid "PlantUML Previewer. \r\nArguments: Command line options passed to the plantuml.jar command."
 msgstr ""
 
 msgid ""

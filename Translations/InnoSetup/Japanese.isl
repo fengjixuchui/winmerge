@@ -14,12 +14,7 @@ CustomInstallation=カスタムインストール
 AppCoreFiles=WinMerge コアファイル
 Filters=フィルタ
 Plugins=プラグイン
-Frhed=Frhed(Free hex editor)
-WinIMerge=WinIMerge(Image Diff/Merge)
-WinWebDiff=WinWebDiff(Web Page Diff)
-ArchiveSupport=Archive Support
 ShellExtension32bit=32-bit WinMerge ShellExtension
-Commands=GnuWin32 Patch for Windows/HTML Tidy/jq
 
 ;Localization Components
 Languages=言語
@@ -83,6 +78,7 @@ ViewStartMenuFolder=WinMerge スタートメニューフォルダを表示(&V)
 
 ;Code Dialogs
 DeletePreviousStartMenu=インストーラは、スタートメニューフォルダの位置が "%s" から "%s" に変更されたことを検出しました. 以前のスタートメニューフォルダを削除しますか?
+ExplorerNeedsRestart=WinMerge のシェルエクステンションを更新するにはエクスプローラーの再起動が必要です。エクスプローラーを再起動しますか?
 
 ; Project file description
 ProjectFileDesc=WinMerge Project file

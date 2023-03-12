@@ -22,10 +22,11 @@
 /// Flags for enabling and mode of extension
 #define CONTEXT_F_ENABLED 0x01
 #define CONTEXT_F_ADVANCED 0x02
+#define CONTEXT_F_COMPARE_AS 0x04
 
 // registry values
-static LPCTSTR f_RegValueEnabled = _T("ContextMenuEnabled");
-static LPCTSTR f_RegValuePath = _T("Executable");
+static const tchar_t* f_RegValueEnabled = _T("ContextMenuEnabled");
+static const tchar_t* f_RegValuePath = _T("Executable");
 
 static bool IsShellExtensionRegistered(bool peruser)
 {
@@ -63,8 +64,8 @@ static bool IsWinMergeContextMenuRegistered()
 
 static bool RegisterShellExtension(bool unregister, bool peruser)
 {
-	TCHAR szSystem32[260] = { 0 };
-	TCHAR szSysWow64[260] = { 0 };
+	tchar_t szSystem32[260] = { 0 };
+	tchar_t szSysWow64[260] = { 0 };
 	GetSystemDirectory(szSystem32, sizeof(szSystem32) / sizeof(szSystem32[0]));
 	GetSystemWow64Directory(szSysWow64, sizeof(szSysWow64) / sizeof(szSysWow64[0]));
 
@@ -125,7 +126,7 @@ static bool RegisterWinMergeContextMenu(bool unregister)
 	stInfo.dwFlags = STARTF_USESHOWWINDOW;
 	stInfo.wShowWindow = SW_SHOW;
 	PROCESS_INFORMATION processInfo;
-	bool retVal = !!CreateProcess(nullptr, (LPTSTR)cmd.c_str(),
+	bool retVal = !!CreateProcess(nullptr, (tchar_t*)cmd.c_str(),
 		nullptr, nullptr, FALSE, CREATE_DEFAULT_ERROR_MODE, nullptr, nullptr,
 		&stInfo, &processInfo);
 	if (!retVal)
@@ -139,6 +140,7 @@ PropShell::PropShell(COptionsMgr *optionsMgr)
 : OptionsPanel(optionsMgr, PropShell::IDD)
 , m_bContextAdded(false)
 , m_bContextAdvanced(false)
+, m_bContextCompareAs(false)
 {
 }
 
@@ -170,12 +172,14 @@ void PropShell::DoDataExchange(CDataExchange* pDX)
 	//{{AFX_DATA_MAP(PropShell)
 	DDX_Check(pDX, IDC_EXPLORER_CONTEXT, m_bContextAdded);
 	DDX_Check(pDX, IDC_EXPLORER_ADVANCED, m_bContextAdvanced);
+	DDX_Check(pDX, IDC_EXPLORER_COMPARE_AS, m_bContextCompareAs);
 	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(PropShell, OptionsPanel)
 	//{{AFX_MSG_MAP(PropShell)
 	ON_BN_CLICKED(IDC_EXPLORER_CONTEXT, OnAddToExplorer)
+	ON_BN_CLICKED(IDC_EXPLORER_ADVANCED, OnAddToExplorerAdvanced)
 	ON_BN_CLICKED(IDC_REGISTER_SHELLEXTENSION, OnRegisterShellExtension)
 	ON_BN_CLICKED(IDC_UNREGISTER_SHELLEXTENSION, OnUnregisterShellExtension)
 	ON_BN_CLICKED(IDC_REGISTER_SHELLEXTENSION_PERUSER, OnRegisterShellExtensionPerUser)
@@ -228,6 +232,9 @@ void PropShell::GetContextRegValues()
 
 	if (dwContextEnabled & CONTEXT_F_ADVANCED)
 		m_bContextAdvanced = true;
+
+	if (dwContextEnabled & CONTEXT_F_COMPARE_AS)
+		m_bContextCompareAs = true;
 }
 
 /// Set registry values for ShellExtension
@@ -237,10 +244,16 @@ void PropShell::OnAddToExplorer()
 	UpdateButtons();
 }
 
+void PropShell::OnAddToExplorerAdvanced()
+{
+	CompareAsContextMenuCheck();
+	UpdateButtons();
+}
+
 /// Saves given path to registry for ShellExtension, and Context Menu settings
 void PropShell::SaveMergePath()
 {
-	TCHAR temp[MAX_PATH] = {0};
+	tchar_t temp[MAX_PATH] = {0};
 	LONG retVal = 0;
 	GetModuleFileName(AfxGetInstanceHandle(), temp, MAX_PATH);
 
@@ -275,6 +288,11 @@ void PropShell::SaveMergePath()
 	else
 		dwContextEnabled &= ~CONTEXT_F_ADVANCED;
 
+	if (m_bContextCompareAs)
+		dwContextEnabled |= CONTEXT_F_COMPARE_AS;
+	else
+		dwContextEnabled &= ~CONTEXT_F_COMPARE_AS;
+
 	retVal = reg.WriteDword(f_RegValueEnabled, dwContextEnabled);
 	if (retVal != ERROR_SUCCESS)
 	{
@@ -291,6 +309,16 @@ void PropShell::AdvancedContextMenuCheck()
 	{
 		CheckDlgButton(IDC_EXPLORER_ADVANCED, FALSE);
 		m_bContextAdvanced = false;
+		CompareAsContextMenuCheck();
+	}
+}
+
+void PropShell::CompareAsContextMenuCheck()
+{
+	if (!IsDlgButtonChecked(IDC_EXPLORER_ADVANCED))
+	{
+		CheckDlgButton(IDC_EXPLORER_COMPARE_AS, FALSE);
+		m_bContextCompareAs = false;
 	}
 }
 
@@ -309,6 +337,8 @@ void PropShell::UpdateButtons()
 	EnableDlgItem(IDC_UNREGISTER_WINMERGECONTEXTMENU, registerdWinMergeContextMenu && win11);
 	EnableDlgItem(IDC_EXPLORER_ADVANCED, 
 		(registered || registeredPerUser || registerdWinMergeContextMenu) && IsDlgButtonChecked(IDC_EXPLORER_CONTEXT));
+	EnableDlgItem(IDC_EXPLORER_COMPARE_AS,
+		(registered || registeredPerUser || registerdWinMergeContextMenu) && IsDlgButtonChecked(IDC_EXPLORER_ADVANCED));
 }
 
 void PropShell::OnRegisterShellExtension()

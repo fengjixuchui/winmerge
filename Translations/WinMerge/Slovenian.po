@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: WinMerge\n"
 "Report-Msgid-Bugs-To: https://bugs.winmerge.org/\n"
 "POT-Creation-Date: 2021-12-14 22:23+0000\n"
-"PO-Revision-Date: 2022-09-12 21:17+0200\n"
+"PO-Revision-Date: 2023-01-14 10:24+0100\n"
 "Last-Translator: Jadran Rudec <jrudec@gmail.com>\n"
 "Language-Team: Slovenian <winmerge-translate@lists.sourceforge.net>\n"
 "Language: sl\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: ../../Src\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #. LANGUAGE, SUBLANGUAGE
 msgid "LANG_ENGLISH, SUBLANG_ENGLISH_US"
@@ -590,7 +590,7 @@ msgid "Mer&ge Mode\tF9"
 msgstr "Združevalni način\tF9"
 
 msgid "Reloa&d\tCtrl+F5"
-msgstr "Znovanal&oži\tCtrl+F5"
+msgstr "Znova nal&oži\tCtrl+F5"
 
 msgid "Reco&mpare As"
 msgstr "Znova primerjaj kot"
@@ -933,8 +933,11 @@ msgstr "Kopiraj &imena datotek"
 msgid "Copy Items To Clip&board"
 msgstr "Kopiraj vnose v o&dložišče"
 
+msgid "Copy All Di&splayed Columns"
+msgstr "Kopiraj vse &prikazane stolpce"
+
 msgid "&Zip"
-msgstr "&Zip arhiv"
+msgstr "Arhiv &Zip"
 
 #, c-format
 msgid "Both to... (%1 of %2)"
@@ -969,8 +972,8 @@ msgstr "Kopiraj &ime datoteke"
 msgid "&Edit Caption"
 msgstr "&Uredi napis"
 
-msgid "&Select..."
-msgstr "&Izberi..."
+msgid "&Open..."
+msgstr "&Odpri..."
 
 msgid "Unpacker Settings"
 msgstr "Nastavitve razpakovalca"
@@ -980,6 +983,9 @@ msgstr "<Brez>"
 
 msgid "<Automatic>"
 msgstr "<Samodejno>"
+
+msgid "&Select..."
+msgstr "&Izberi..."
 
 msgid "Prediffer Settings"
 msgstr "Nastavitve predogleda razlik"
@@ -1104,6 +1110,9 @@ msgstr "Prebrskaj..."
 msgid " Folder: Filter"
 msgstr " Mapa: Filter"
 
+msgid " File: Prediffer Plugin"
+msgstr " Datoteka: Prediffer vtičnik"
+
 msgid " File: Unpacker Plugin"
 msgstr " Datoteka: Vtičnik razpakovalca"
 
@@ -1151,6 +1160,9 @@ msgstr "Zapri okno 'Izberi datoteke ali mape' s klikom na gumb 'Primerjaj'"
 
 msgid "Op&en-dialog Auto-Completion:"
 msgstr "Odpri pogovorno okno &Samodejno dokončanje:"
+
+msgid "Auto-&reload modified files:"
+msgstr "Samodejno &znova naloži spremenjene datoteke:"
 
 msgid "Language:"
 msgstr "Jezik:"
@@ -1919,11 +1931,14 @@ msgstr "Integracija v lupino"
 msgid "Explorer"
 msgstr "Raziskovalec"
 
+msgid "&Add to context menu"
+msgstr "&Dodaj v priročni meni"
+
 msgid "E&nable advanced menu"
 msgstr "Omogoči &napredni meni"
 
-msgid "&Add to context menu"
-msgstr "&Dodaj v priročni meni"
+msgid "Enable &Compare As menu"
+msgstr ""
 
 msgid "&Register shell extension"
 msgstr "&Registriraj končnico lupine"
@@ -1968,12 +1983,8 @@ msgstr "Prag za preklop na &hitro primerjavo (MB):"
 msgid "Threshold for switching to &binary compare (MB):"
 msgstr "Prag za preklop na &dvojiško primerjavo (MB):"
 
-msgid ""
-"\n"
-"&Number of compare threads (a negative value implies addition of the number of available CPU cores):"
-msgstr ""
-"\n"
-"Število primerjalnih &niti (negativna vrednost pomeni dodajanje števila razpoložljivih jeder CPE):"
+msgid "&Number of CPU cores to use:"
+msgstr "Š&tevilo jeder procesorja za uporabo:"
 
 msgid "&CSV File Patterns:"
 msgstr "Vzorci datotek &CSV:"
@@ -2059,7 +2070,7 @@ msgid ""
 "New Documents (Ctrl+N)"
 msgstr ""
 "\n"
-"Novi dokumenti (Ctrl+N)"
+"Nov dokumenti (Ctrl+N)"
 
 msgid ""
 "\n"
@@ -3246,7 +3257,7 @@ msgid "Number of differences in file. This number does not include ignored diffe
 msgstr "Število razlik v datoteki. Ta številka ne vsebuje prezrtih razlik."
 
 msgid "Shows an asterisk (*) if the file is binary."
-msgstr "Prikaže zvezdico (*) če je datoteka dvojiška."
+msgstr "Prikaže zvezdico (*), če je datoteka dvojiška."
 
 msgid "Unpacker plugin name or pipeline."
 msgstr "Ime vtičnika razpakovalca ali cevovod."
@@ -3759,6 +3770,9 @@ msgstr "Omogoči sa&modejno največjo širino"
 msgid "We&bpage"
 msgstr "&Spletna stran"
 
+msgid "W&rap Text"
+msgstr ""
+
 msgid "Frhed is not installed."
 msgstr "Frhed ni nameščen."
 
@@ -3958,6 +3972,12 @@ msgstr "Dovoli zagon samo enega primerka programa"
 msgid "Allow only one instance to run and wait for the instance to terminate"
 msgstr "Dovoli zagon le enega primerka, in počakaj, da se primerek dokonča"
 
+msgid "Only on window activated"
+msgstr "Aktivirano samo na oknu"
+
+msgid "Immediately"
+msgstr "Takoj"
+
 msgid "Al&l"
 msgstr "V&se"
 
@@ -3967,8 +3987,8 @@ msgstr "Polepšanje"
 msgid "Content Extraction"
 msgstr "Razširjanje vsebine"
 
-msgid "Visualization"
-msgstr "Vidna predstavitev"
+msgid "Preview"
+msgstr "Predogled"
 
 msgid "Data Query"
 msgstr "Podatkovna poizvedba"
@@ -4048,6 +4068,9 @@ msgstr "Prezri polja CSV"
 msgid "Ignore TSV Fields"
 msgstr "Prezri polja TSV"
 
+msgid "Ignore Leading Line Numbers"
+msgstr ""
+
 msgid "Apply Prediff Substitution Filters"
 msgstr "Uporabite nadomestne filtre Prediff"
 
@@ -4063,8 +4086,14 @@ msgstr "Polepšaj XML"
 msgid "Prettify YAML"
 msgstr "Polepšaj YAML"
 
-msgid "Visualize Graphviz"
-msgstr "Prikaži Graphviz"
+msgid "Preview Graphviz"
+msgstr "Predogled Graphviz"
+
+msgid "Preview Markdown"
+msgstr "Predogled označevanja"
+
+msgid "Preview PlantUML"
+msgstr "Predogled PlantUML"
 
 msgid "Query CSV Data..."
 msgstr "Poizveduj podatke CSV..."
@@ -4231,11 +4260,25 @@ msgstr ""
 "Argumenti: možnosti ukazne vrstice so s prehodom ukaza yq."
 
 msgid ""
-"Graphviz Visualizer. \r\n"
+"Graphviz Previewer. \r\n"
 "Arguments: Command line options passed to the dot command."
 msgstr ""
-"Graphviz vizualizator. \r\n"
-"Argumenti: možnosti ukazne vrstice so s prehodom ukaza dot."
+"Predogledovalnik Graphviz.\r\n"
+"Argumenti: možnosti ukazne vrstice, posredovane ukazu pika."
+
+msgid ""
+"Markdown Previewer. \r\n"
+"Arguments: Command line options passed to the md2html command."
+msgstr ""
+"Predogledovalnik označevanja.\r\n"
+"Argumenti: možnosti ukazne vrstice, posredovane ukazu md2html."
+
+msgid ""
+"PlantUML Previewer. \r\n"
+"Arguments: Command line options passed to the plantuml.jar command."
+msgstr ""
+"Predogledovalnik PlantUML.\r\n"
+"Argumenti: možnosti ukazne vrstice, posredovane ukazu plantuml.jar."
 
 msgid ""
 "CSV Querier with q command. \r\n"

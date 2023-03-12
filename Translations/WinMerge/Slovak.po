@@ -933,6 +933,9 @@ msgstr "Kopírovať názvy &súborov"
 msgid "Copy Items To Clip&board"
 msgstr "Kopírovať položky do &schránky"
 
+msgid "Copy All Di&splayed Columns"
+msgstr ""
+
 msgid "&Zip"
 msgstr "&Zbaliť ZIP"
 
@@ -969,8 +972,8 @@ msgstr "Kopírovať názov &súboru"
 msgid "&Edit Caption"
 msgstr ""
 
-msgid "&Select..."
-msgstr "&Vybrať..."
+msgid "&Open..."
+msgstr ""
 
 msgid "Unpacker Settings"
 msgstr "Nastavenia rozbaľovača"
@@ -980,6 +983,9 @@ msgstr "<Žiadny>"
 
 msgid "<Automatic>"
 msgstr "<Automatické>"
+
+msgid "&Select..."
+msgstr "&Vybrať..."
 
 msgid "Prediffer Settings"
 msgstr "Nastavenia predbežného spracovateľa rozdielov"
@@ -1104,6 +1110,9 @@ msgstr "Prehľadávať..."
 msgid " Folder: Filter"
 msgstr " Priečinok: Filter"
 
+msgid " File: Prediffer Plugin"
+msgstr ""
+
 msgid " File: Unpacker Plugin"
 msgstr " File: Rozšírenie rozbaľovača"
 
@@ -1151,6 +1160,9 @@ msgstr "Kliknutím na tlačidlo Porovnať zatvoriť dialógové okno „Vybrať 
 
 msgid "Op&en-dialog Auto-Completion:"
 msgstr "Automatické dopĺňanie v dialógu &Otvoriť:"
+
+msgid "Auto-&reload modified files:"
+msgstr ""
 
 msgid "Language:"
 msgstr "Jazyk:"
@@ -1919,11 +1931,14 @@ msgstr "Integrácia prostredia"
 msgid "Explorer"
 msgstr "Prieskumník"
 
+msgid "&Add to context menu"
+msgstr "Prid&ať do ponuky súvislosti"
+
 msgid "E&nable advanced menu"
 msgstr "Po&voliť rozšírenú ponuku"
 
-msgid "&Add to context menu"
-msgstr "Prid&ať do ponuky súvislosti"
+msgid "Enable &Compare As menu"
+msgstr ""
 
 msgid "&Register shell extension"
 msgstr "Za&registrovať rozšírenie prostredia"
@@ -1968,12 +1983,8 @@ msgstr "Prahová hodnota pre prepnutie pre &rýchle porovnanie (MB):"
 msgid "Threshold for switching to &binary compare (MB):"
 msgstr "Prahová hodnota pre prepnutie na &binárne porovnanie (MB):"
 
-msgid ""
-"\n"
-"&Number of compare threads (a negative value implies addition of the number of available CPU cores):"
+msgid "&Number of CPU cores to use:"
 msgstr ""
-"\n"
-"&Počet porovnávaných vlákien (záporná hodnota znamená pridanie počtu dostupných jadier CPU):"
 
 msgid "&CSV File Patterns:"
 msgstr "Vzory súborov &CSV:"
@@ -3734,6 +3745,9 @@ msgstr "Povoliť &automaticky maximalizovať šírku"
 msgid "We&bpage"
 msgstr ""
 
+msgid "W&rap Text"
+msgstr ""
+
 msgid "Frhed is not installed."
 msgstr "Frhed nie je nainštalovaný."
 
@@ -3933,6 +3947,12 @@ msgstr "Povoliť spustenie iba jednej inštancie"
 msgid "Allow only one instance to run and wait for the instance to terminate"
 msgstr "Povolí spustenie iba jednej inštancie a počká, kým sa inštancia ukončí"
 
+msgid "Only on window activated"
+msgstr ""
+
+msgid "Immediately"
+msgstr ""
+
 msgid "Al&l"
 msgstr "Al&l"
 
@@ -3942,8 +3962,8 @@ msgstr "Prikrášlenie"
 msgid "Content Extraction"
 msgstr "Rozbalenie obsahu"
 
-msgid "Visualization"
-msgstr "Vizualizácia"
+msgid "Preview"
+msgstr ""
 
 msgid "Data Query"
 msgstr "Vyhľadávanie údajov"
@@ -4023,6 +4043,9 @@ msgstr "Ignorovanie polí CSV"
 msgid "Ignore TSV Fields"
 msgstr "Ignorovanie polí TSV"
 
+msgid "Ignore Leading Line Numbers"
+msgstr ""
+
 msgid "Apply Prediff Substitution Filters"
 msgstr "Použitie filtrov nahradenia predbežného spracovania rozdielov"
 
@@ -4038,8 +4061,14 @@ msgstr "Skrášliť XML"
 msgid "Prettify YAML"
 msgstr "Skrášliť YAML"
 
-msgid "Visualize Graphviz"
-msgstr "Vizualizácia zobrazenia grafov"
+msgid "Preview Graphviz"
+msgstr ""
+
+msgid "Preview Markdown"
+msgstr ""
+
+msgid "Preview PlantUML"
+msgstr ""
 
 msgid "Query CSV Data..."
 msgstr "Vyhľadávanie údajov CSV..."
@@ -4205,12 +4234,14 @@ msgstr ""
 "YAML skrášlené príkazom yq\r\n"
 "Argumenty: Možnosti filtra alebo príkazového riadka odovzdané príkazu yq."
 
-msgid ""
-"Graphviz Visualizer. \r\n"
-"Arguments: Command line options passed to the dot command."
+msgid "Graphviz Previewer. \r\nArguments: Command line options passed to the dot command."
 msgstr ""
-"Vizualizér zobrazenia grafov\r\n"
-"Argumenty: Možnosti príkazového riadku odovzdané príkazu dot."
+
+msgid "Markdown Previewer. \r\nArguments: Command line options passed to the md2html command."
+msgstr ""
+
+msgid "PlantUML Previewer. \r\nArguments: Command line options passed to the plantuml.jar command."
+msgstr ""
 
 msgid ""
 "CSV Querier with q command. \r\n"

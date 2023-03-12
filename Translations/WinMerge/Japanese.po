@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: WinMerge\n"
 "Report-Msgid-Bugs-To: https://bugs.winmerge.org/\n"
 "POT-Creation-Date: 2020-12-05 22:07+0000\n"
-"PO-Revision-Date: 2022-09-14 22:42+0900\n"
+"PO-Revision-Date: 2023-01-08 22:25+0900\n"
 "Last-Translator: Takashi Sawanaka <sawanaka@d1.dion.ne.jp>\n"
 "Language-Team: Japanese <winmerge-translate@lists.sourceforge.net>\n"
 "Language: ja\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: ..\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #. LANGUAGE, SUBLANGUAGE
 msgid "LANG_ENGLISH, SUBLANG_ENGLISH_US"
@@ -932,6 +932,9 @@ msgstr "ファイル名をコピー(&F)"
 msgid "Copy Items To Clip&board"
 msgstr "項目をクリップボードにコピー(&B)"
 
+msgid "Copy All Di&splayed Columns"
+msgstr "すべての表示列をコピー(&S)"
+
 msgid "&Zip"
 msgstr "圧縮(&Z)"
 
@@ -968,8 +971,8 @@ msgstr "ファイル名をコピー(&F)"
 msgid "&Edit Caption"
 msgstr "キャプションの編集(&E)"
 
-msgid "&Select..."
-msgstr "選択(&S)..."
+msgid "&Open..."
+msgstr "開く(&O)..."
 
 msgid "Unpacker Settings"
 msgstr "展開プラグイン設定"
@@ -979,6 +982,9 @@ msgstr "<なし>"
 
 msgid "<Automatic>"
 msgstr "<自動>"
+
+msgid "&Select..."
+msgstr "選択(&S)..."
 
 msgid "Prediffer Settings"
 msgstr "比較前処理プラグイン設定"
@@ -1103,6 +1109,9 @@ msgstr "参照..."
 msgid " Folder: Filter"
 msgstr " フォルダー: フィルター"
 
+msgid " File: Prediffer Plugin"
+msgstr " ファイル: 比較前処理プラグイン"
+
 msgid " File: Unpacker Plugin"
 msgstr " ファイル: 展開プラグイン"
 
@@ -1150,6 +1159,9 @@ msgstr "[比較] 押下時に [ファイルまたはフォルダーの選択] �
 
 msgid "Op&en-dialog Auto-Completion:"
 msgstr "[開く] ダイアログのオートコンプリート(&E):"
+
+msgid "Auto-&reload modified files:"
+msgstr "変更されたファイルの自動再読み込み(&R):"
 
 msgid "Language:"
 msgstr "言語:"
@@ -1922,11 +1934,14 @@ msgstr "シェル統合"
 msgid "Explorer"
 msgstr "エクスプローラー"
 
+msgid "&Add to context menu"
+msgstr "コンテキストメニューに追加する(&A)"
+
 msgid "E&nable advanced menu"
 msgstr "拡張メニューを有効にする(&N)"
 
-msgid "&Add to context menu"
-msgstr "コンテキストメニューに追加する(&A)"
+msgid "Enable &Compare As menu"
+msgstr "「形式を指定して比較」メニューを有効にする(&C)"
 
 msgid "&Register shell extension"
 msgstr "シェル拡張を登録(&R)"
@@ -1971,12 +1986,8 @@ msgstr "クイック比較切替閾値 (MB)(&Q):"
 msgid "Threshold for switching to &binary compare (MB):"
 msgstr "バイナリ比較切替閾値 (MB)(&B):"
 
-msgid ""
-"\n"
-"&Number of compare threads (a negative value implies addition of the number of available CPU cores):"
-msgstr ""
-"比較スレッドの数(&N):\n"
-"負の値を指定した場合、スレッド数は使用可能な CPU コア数を加算した値になります。"
+msgid "&Number of CPU cores to use:"
+msgstr "使用するCPUコアの数(&N):"
 
 msgid "&CSV File Patterns:"
 msgstr "&CSV ファイルとして扱うパターン:"
@@ -3760,6 +3771,9 @@ msgstr "タブ幅の自動調整を有効にする(&A)"
 msgid "We&bpage"
 msgstr "Webページ(&B)"
 
+msgid "W&rap Text"
+msgstr "折り返して全体を表示(&R)"
+
 msgid "Frhed is not installed."
 msgstr "Frhed がインストールされていません。"
 
@@ -3959,6 +3973,12 @@ msgstr "1 つのみインスタンスを起動する"
 msgid "Allow only one instance to run and wait for the instance to terminate"
 msgstr "1 つのみインスタンスを起動し、既起動インスタンスの終了を待つ"
 
+msgid "Only on window activated"
+msgstr "ウインドウがアクティブになった時のみ"
+
+msgid "Immediately"
+msgstr "即時"
+
 msgid "Al&l"
 msgstr "すべて(&L)"
 
@@ -3968,8 +3988,8 @@ msgstr "整形"
 msgid "Content Extraction"
 msgstr "内容抽出"
 
-msgid "Visualization"
-msgstr "視覚化"
+msgid "Preview"
+msgstr "プレビュー"
 
 msgid "Data Query"
 msgstr "データ問い合わせ"
@@ -4049,6 +4069,9 @@ msgstr "CSV の指定列を無視"
 msgid "Ignore TSV Fields"
 msgstr "TSV の指定列を無視"
 
+msgid "Ignore Leading Line Numbers"
+msgstr "先頭の行番号を無視"
+
 msgid "Apply Prediff Substitution Filters"
 msgstr "比較前処理置換フィルター"
 
@@ -4064,8 +4087,14 @@ msgstr "XML整形"
 msgid "Prettify YAML"
 msgstr "YAML 整形"
 
-msgid "Visualize Graphviz"
-msgstr "Graphviz 視覚化"
+msgid "Preview Graphviz"
+msgstr "Graphvizプレビュー"
+
+msgid "Preview Markdown"
+msgstr "Markdownプレビュー"
+
+msgid "Preview PlantUML"
+msgstr "PlantUMLプレビュー"
 
 msgid "Query CSV Data..."
 msgstr "CSV データの問い合わせ..."
@@ -4232,11 +4261,23 @@ msgstr ""
 "引数: フィルターまたは yq コマンドに渡すコマンドライン オプション。"
 
 msgid ""
-"Graphviz Visualizer. \r\n"
+"Graphviz Previewer. \r\n"
 "Arguments: Command line options passed to the dot command."
 msgstr ""
-"Graphviz ファイルを画像化します。\r\n"
+"Graphviz ファイルを画像化して表示します。\r\n"
 "引数: dot コマンドに渡すコマンドライン オプション。"
+
+msgid ""
+"Markdown Previewer. \r\n"
+"Arguments: Command line options passed to the md2html command."
+msgstr ""
+"Markdown ファイルをHTMLに変換して表示します。\r\n"
+"引数: md2html コマンドに渡すコマンドラインオプション。"
+
+msgid "PlantUML Previewer. \r\nArguments: Command line options passed to the plantuml.jar command."
+msgstr ""
+"PlantUML ファイルを画像に変換して表示します。\r\n"
+"引数: plantuml.jar コマンドに渡すコマンドラインオプション。"
 
 msgid ""
 "CSV Querier with q command. \r\n"

@@ -195,9 +195,6 @@ DoHighlightText ( bool bNotifyIfNotFound, bool bUpdateView/*=true*/)
   if (m_nDirection == 0)
     dwSearchFlags |= FIND_DIRECTION_UP;
 
-  if (m_nScope != 0)
-    m_ptFoundAt = m_pBuddy->GetSearchPos (dwSearchFlags);
-
   bool bFound;
   if (m_nScope == 0)
     {
@@ -205,15 +202,9 @@ DoHighlightText ( bool bNotifyIfNotFound, bool bUpdateView/*=true*/)
       bFound = m_pBuddy->FindTextInBlock (m_sText, m_ptFoundAt, m_ptBlockBegin, m_ptBlockEnd,
                                           dwSearchFlags, false, &m_ptFoundAt);
     }
-  else if (m_bDontWrap)
-    {
-      //  Searching whole text, no wrap
-      bFound = m_pBuddy->FindText (m_sText, m_ptFoundAt, dwSearchFlags, false, &m_ptFoundAt);
-    }
   else
     {
-      //  Searching whole text, wrap
-      bFound = m_pBuddy->FindText (m_sText, m_ptFoundAt, dwSearchFlags, true, &m_ptFoundAt);
+      bFound = m_pBuddy->FindText (m_sText, m_ptFoundAt, dwSearchFlags, !m_bDontWrap, &m_ptFoundAt);
     }
 
   if (!bFound)
@@ -221,7 +212,7 @@ DoHighlightText ( bool bNotifyIfNotFound, bool bUpdateView/*=true*/)
       if ( bNotifyIfNotFound ) 
       {
         CString prompt, text(m_sText);
-        prompt.Format (LoadResString(IDS_EDIT_TEXT_NOT_FOUND).c_str(), (LPCTSTR)text);
+        prompt.Format (LoadResString(IDS_EDIT_TEXT_NOT_FOUND).c_str(), (const tchar_t*)text);
         AfxMessageBox (prompt, MB_ICONINFORMATION);
       }
       if (m_nScope == 0)
@@ -235,7 +226,7 @@ DoHighlightText ( bool bNotifyIfNotFound, bool bUpdateView/*=true*/)
 }
 
 bool CEditReplaceDlg::
-DoReplaceText (LPCTSTR /*pszNewText*/, DWORD dwSearchFlags)
+DoReplaceText (const tchar_t* /*pszNewText*/, DWORD dwSearchFlags)
 {
   ASSERT (m_pBuddy != nullptr);
   // m_pBuddy->m_nLastFindWhatLen
@@ -247,21 +238,15 @@ DoReplaceText (LPCTSTR /*pszNewText*/, DWORD dwSearchFlags)
       bFound = m_pBuddy->FindTextInBlock (m_sText, m_ptFoundAt, m_ptBlockBegin, m_ptBlockEnd,
                                           dwSearchFlags, false, &m_ptFoundAt);
     }
-  else if (m_bDontWrap)
-    {
-      //  Searching whole text, no wrap
-      bFound = m_pBuddy->FindText (m_sText, m_ptFoundAt, dwSearchFlags, false, &m_ptFoundAt);
-    }
   else
     {
-      //  Searching whole text, wrap
-      bFound = m_pBuddy->FindText (m_sText, m_ptFoundAt, dwSearchFlags, true, &m_ptFoundAt);
+      bFound = m_pBuddy->FindText (m_sText, m_ptFoundAt, dwSearchFlags, !m_bDontWrap, &m_ptFoundAt);
     }
 
   if (!bFound)
     {
       CString prompt, text(m_sText);
-      prompt.Format (LoadResString(IDS_EDIT_TEXT_NOT_FOUND).c_str(), (LPCTSTR)text);
+      prompt.Format (LoadResString(IDS_EDIT_TEXT_NOT_FOUND).c_str(), (const tchar_t*)text);
       AfxMessageBox (prompt, MB_ICONINFORMATION);
       if (m_nScope == 0)
         m_ptCurrentPos = m_ptBlockBegin;
@@ -269,6 +254,43 @@ DoReplaceText (LPCTSTR /*pszNewText*/, DWORD dwSearchFlags)
     }
 
   m_pBuddy->HighlightText (m_ptFoundAt, m_pBuddy->m_nLastFindWhatLen);
+  return true;
+}
+
+bool CEditReplaceDlg::
+AdjustSearchPos (CEPoint& ptFoundAt) const
+{
+  if (m_nScope != 0)
+    ptFoundAt = m_pBuddy->GetSearchPos (m_nDirection == 0 ? FIND_DIRECTION_UP : 0);
+  else
+    ptFoundAt = m_pBuddy->GetCursorPos ();
+  if (!m_pBuddy->m_nLastFindWhatLen)
+    {
+      if (m_nDirection != 0)
+        {
+          if (ptFoundAt.y + 1 < m_pBuddy->GetLineCount ())
+            {
+              ptFoundAt.x = 0;
+              ptFoundAt.y++;
+            }
+          else
+            {
+              return false;
+            }
+        }
+      else
+        {
+          if (ptFoundAt.y - 1 >= 0)
+            {
+              ptFoundAt.y--;
+              ptFoundAt.x = m_pBuddy->GetLineLength ( ptFoundAt.y );
+            }
+          else
+            {
+              return false;
+            }
+        }
+    }
   return true;
 }
 
@@ -289,6 +311,7 @@ FindNextPrev (bool bNext)
 
   if (!m_bFound)
     {
+      m_ptFoundAt = m_pBuddy->GetCursorPos ();
       m_bFound = DoHighlightText ( true );
       if (m_bFound)
         {
@@ -305,19 +328,11 @@ FindNextPrev (bool bNext)
       return;
     }
 
-  if (!m_pBuddy->m_nLastFindWhatLen)
-    if (m_ptFoundAt.y + 1 < m_pBuddy->GetLineCount ())
-      {
-        m_ptFoundAt.x = 0;
-        m_ptFoundAt.y++;
-      }
-    else
-      {
-        m_bFound = false;
-        return;
-      }
-  else
-    m_ptFoundAt.x += 1;
+  if (!AdjustSearchPos (m_ptFoundAt))
+    {
+      m_bFound = false;
+      return;
+    }
   m_bFound = DoHighlightText ( true );
   if (m_bFound)
     {
@@ -358,6 +373,7 @@ OnEditReplace ()
 
   if (!m_bFound)
     {
+      m_ptFoundAt = m_pBuddy->GetCursorPos ();
       m_bFound = DoHighlightText ( true );
       CButton *pSkip = (CButton*) GetDlgItem (IDC_EDIT_SKIP);
       CButton *pRepl = (CButton*) GetDlgItem (IDC_EDIT_REPLACE);
@@ -391,18 +407,14 @@ OnEditReplace ()
   //  Manually recalculate points
   if (m_bEnableScopeSelection)
     {
-      if (m_ptBlockBegin.y == m_ptFoundAt.y && m_ptBlockBegin.x > m_ptFoundAt.x)
-        {
-          m_ptBlockBegin.x -= m_pBuddy->m_nLastFindWhatLen;
-          m_ptBlockBegin.x += m_pBuddy->m_nLastReplaceLen;
-        }
-      if (m_ptBlockEnd.y == m_ptFoundAt.y && m_ptBlockEnd.x > m_ptFoundAt.x)
-        {
-          m_ptBlockEnd.x -= m_pBuddy->m_nLastFindWhatLen;
-          m_ptBlockEnd.x += m_pBuddy->m_nLastReplaceLen;
-        }
+      m_ptBlockBegin = m_pBuddy->m_ptSavedSelStart;
+      m_ptBlockEnd = m_pBuddy->m_ptSavedSelEnd;
     }
-  m_ptFoundAt = m_pBuddy->GetCursorPos ();
+  if (!AdjustSearchPos (m_ptFoundAt))
+    {
+      m_bFound = false;
+      return;
+    }
   m_bFound = DoHighlightText ( true );
 
   m_pBuddy->SaveLastSearch(&lastSearch);
@@ -431,7 +443,7 @@ OnEditReplaceAll ()
       m_bFound = DoHighlightText ( false, false );
     }
 
-  CPoint m_ptFirstFound = m_ptFoundAt;
+  CEPoint m_ptFirstFound = m_ptFoundAt;
   bool bGroupWithPrevious = false;
 
   while (m_bFound)
@@ -443,23 +455,20 @@ OnEditReplaceAll ()
         dwSearchFlags |= FIND_WHOLE_WORD;
       if (m_bRegExp)
         dwSearchFlags |= FIND_REGEXP;
+      if (m_nDirection == 0)
+        dwSearchFlags |= FIND_DIRECTION_UP;
     
       //  We have highlighted text
-      VERIFY (m_pBuddy->ReplaceSelection (m_sNewText, m_sNewText.GetLength(), dwSearchFlags, bGroupWithPrevious));
+      m_pBuddy->ReplaceSelection (m_sNewText, m_sNewText.GetLength(), dwSearchFlags, bGroupWithPrevious);
+
+      if (m_pBuddy->m_nLastFindWhatLen != 0 || m_pBuddy->m_nLastReplaceLen != 0)
+        nNumReplaced++;
 
       //  Manually recalculate points
       if (m_bEnableScopeSelection)
         {
-          if (m_ptBlockBegin.y == m_ptFoundAt.y && m_ptBlockBegin.x > m_ptFoundAt.x)
-            {
-              m_ptBlockBegin.x -= m_pBuddy->m_nLastFindWhatLen;
-              m_ptBlockBegin.x += m_pBuddy->m_nLastReplaceLen;
-            }
-          if (m_ptBlockEnd.y == m_ptFoundAt.y && m_ptBlockEnd.x > m_ptFoundAt.x)
-            {
-              m_ptBlockEnd.x -= m_pBuddy->m_nLastFindWhatLen;
-              m_ptBlockEnd.x += m_pBuddy->m_nLastReplaceLen;
-            }
+          m_ptBlockBegin = m_pBuddy->m_ptSavedSelStart;
+          m_ptBlockEnd = m_pBuddy->m_ptSavedSelEnd;
         }
       // recalculate m_ptFirstFound
       if (m_ptFirstFound.y == m_ptFoundAt.y && m_ptFirstFound.x > m_ptFoundAt.x)
@@ -469,14 +478,17 @@ OnEditReplaceAll ()
         }
 
       // calculate the end of the current replacement
-      CPoint m_ptCurrentReplacedEnd = m_pBuddy->GetCursorPos ();
+      CEPoint m_ptCurrentReplacedEnd = m_pBuddy->GetCursorPos ();
 
       // m_ptFoundAt.x has two meanings:
       // (1) One is the position of the word that was found.
       // (2) The other is next position to search.
       // The code below calculates the latter.
-      m_ptFoundAt = m_pBuddy->GetCursorPos ();
-      nNumReplaced++;
+      if (!AdjustSearchPos (m_ptFoundAt))
+        {
+          m_bFound = false;
+          break;
+        }
 
       // find the next instance
       m_bFound = DoHighlightText ( false, false );
@@ -504,7 +516,7 @@ OnEditReplaceAll ()
   CString strMessage;
   CString strNumber;
   strNumber.Format ( _T("%d"), nNumReplaced );
-  LPCTSTR lpsz = static_cast<LPCTSTR>(strNumber);
+  const tchar_t* lpsz = static_cast<const tchar_t*>(strNumber);
   AfxFormatStrings (strMessage, LoadResString(IDS_NUM_REPLACED).c_str(), &lpsz, 1);
 
   AfxMessageBox( strMessage, MB_ICONINFORMATION|MB_DONT_DISPLAY_AGAIN, IDS_NUM_REPLACED);
@@ -536,7 +548,7 @@ UpdateControls()
 // Last search functions
 //
 void CEditReplaceDlg::
-SetLastSearch (LPCTSTR sText, bool bMatchCase, bool bWholeWord, bool bRegExp, int nScope, int nDirection)
+SetLastSearch (const tchar_t* sText, bool bMatchCase, bool bWholeWord, bool bRegExp, int nScope, int nDirection)
 {
   lastSearch.m_bMatchCase = bMatchCase;
   lastSearch.m_bWholeWord = bWholeWord;

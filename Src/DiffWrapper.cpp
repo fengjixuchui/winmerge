@@ -10,8 +10,6 @@
 #include "pch.h"
 #define NOMINMAX
 #include "DiffWrapper.h"
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <algorithm>
 #include <string>
 #include <cctype>
@@ -48,6 +46,8 @@
 #include "SyntaxColors.h"
 #include "MergeApp.h"
 #include "SubstitutionList.h"
+#include "codepage_detect.h"
+#include "cio.h"
 
 using Poco::Debugger;
 using Poco::format;
@@ -535,7 +535,7 @@ bool CDiffWrapper::RunFileDiff()
 		String sTempPath = env::GetTemporaryPath(); // get path to Temp folder
 		String path = paths::ConcatPath(sTempPath, _T("Diff.txt"));
 
-		if (_tfopen_s(&outfile, path.c_str(), _T("w+")) == 0)
+		if (cio::tfopen_s(&outfile, path, _T("w+")) == 0)
 		{
 			print_normal_script(script);
 			fclose(outfile);
@@ -811,11 +811,7 @@ String CDiffWrapper::FormatSwitchString() const
 
 	if ((m_options.m_outputStyle == DIFF_OUTPUT_CONTEXT || m_options.m_outputStyle == DIFF_OUTPUT_UNIFIED) &&
 		m_options.m_contextLines > 0)
-	{
-		TCHAR tmpNum[5] = {0};
-		_itot_s(m_options.m_contextLines, tmpNum, 10);
-		switches += tmpNum;
-	}
+		switches += strutils::to_str(m_options.m_contextLines);
 
 	if (ignore_all_space_flag > 0)
 		switches += _T(" -w");
@@ -1229,8 +1225,8 @@ void CDiffWrapper::WritePatchFileHeader(enum output_style tOutput_style, bool bA
 	outfile = nullptr;
 	if (!m_sPatchFile.empty())
 	{
-		const TCHAR *mode = (bAppendFiles ? _T("a+") : _T("w+"));
-		if (_tfopen_s(&outfile, m_sPatchFile.c_str(), mode) != 0)
+		const tchar_t *mode = (bAppendFiles ? _T("a+") : _T("w+"));
+		if (cio::tfopen_s(&outfile, m_sPatchFile, mode) != 0)
 			outfile = nullptr;
 	}
 
@@ -1268,7 +1264,7 @@ void CDiffWrapper::WritePatchFileTerminator(enum output_style tOutput_style)
 	outfile = nullptr;
 	if (!m_sPatchFile.empty())
 	{
-		if (_tfopen_s(&outfile, m_sPatchFile.c_str(), _T("a+")) != 0)
+		if (cio::tfopen_s(&outfile, m_sPatchFile, _T("a+")) != 0)
 			outfile = nullptr;
 	}
 
@@ -1322,17 +1318,17 @@ void CDiffWrapper::WritePatchFile(struct change * script, file_data * inf)
 		path2 = m_files[1];
 	path1 = paths::ToUnixPath(path1);
 	path2 = paths::ToUnixPath(path2);
-	if ((inf_patch[0].linbuf && ucr::CheckForInvalidUtf8(inf_patch[0].buffer, inf_patch[0].buffered_chars)) ||
-		(inf_patch[1].linbuf && ucr::CheckForInvalidUtf8(inf_patch[1].buffer, inf_patch[1].buffered_chars)))
+	auto strdupPath = [](const String& path, const void *buffer, size_t buffered_chars) -> char*
 	{
-		inf_patch[0].name = _strdup(ucr::toThreadCP(path1).c_str());
-		inf_patch[1].name = _strdup(ucr::toThreadCP(path2).c_str());
-	}
-	else
-	{
-		inf_patch[0].name = _strdup(ucr::toUTF8(path1).c_str());
-		inf_patch[1].name = _strdup(ucr::toUTF8(path2).c_str());
-	}
+		FileTextEncoding encoding = codepage_detect::Guess(_T(""), buffer, buffered_chars, 1);
+		if (encoding.m_unicoding != ucr::NONE)
+			encoding.SetUnicoding(ucr::UTF8);
+		ucr::buffer buf(256);
+		ucr::convert(ucr::CP_TCHAR, reinterpret_cast<const unsigned char *>(path.c_str()), static_cast<int>(path.size() * sizeof(tchar_t)), encoding.m_codepage, &buf);
+		return strdup(reinterpret_cast<const char *>(buf.ptr));
+	};
+	inf_patch[0].name = strdupPath(path1, inf_patch[0].buffer, inf_patch[0].buffered_chars);
+	inf_patch[1].name = strdupPath(path2, inf_patch[1].buffer, inf_patch[1].buffered_chars);
 
 	// If paths in m_s1File and m_s2File point to original files, then we can use
 	// them to fix potentially meaningless stats from potentially temporary files,
@@ -1351,8 +1347,8 @@ void CDiffWrapper::WritePatchFile(struct change * script, file_data * inf)
 	outfile = nullptr;
 	if (!m_sPatchFile.empty())
 	{
-		const TCHAR *mode = (m_bAppendFiles ? _T("a+") : _T("w+"));
-		if (_tfopen_s(&outfile, m_sPatchFile.c_str(), mode) != 0)
+		const tchar_t *mode = (m_bAppendFiles ? _T("a+") : _T("w+"));
+		if (cio::tfopen_s(&outfile, m_sPatchFile, mode) != 0)
 			outfile = nullptr;
 	}
 
@@ -1362,25 +1358,23 @@ void CDiffWrapper::WritePatchFile(struct change * script, file_data * inf)
 		return;
 	}
 
-	// Print "command line"
-	if (m_bAddCmdLine && output_style != OUTPUT_HTML)
-	{
-		String switches = FormatSwitchString();
-		_ftprintf(outfile, _T("diff%s %s %s\n"),
-			switches.c_str(), 
-			path1 == _T("NUL") ? _T("/dev/null") : path1.c_str(),
-			path2 == _T("NUL") ? _T("/dev/null") : path2.c_str());
-	}
-
 	if (strcmp(inf[0].name, "NUL") == 0)
 	{
 		free((void *)inf_patch[0].name);
-		inf_patch[0].name = _strdup("/dev/null");
+		inf_patch[0].name = strdup("/dev/null");
 	}
 	if (strcmp(inf[1].name, "NUL") == 0)
 	{
 		free((void *)inf_patch[1].name);
-		inf_patch[1].name = _strdup("/dev/null");
+		inf_patch[1].name = strdup("/dev/null");
+	}
+
+	// Print "command line"
+	if (m_bAddCmdLine && output_style != OUTPUT_HTML)
+	{
+		String switches = FormatSwitchString();
+		fprintf(outfile, "diff%S %s %s\n",
+			switches.c_str(), inf_patch[0].name, inf_patch[1].name);
 	}
 
 	// Output patchfile

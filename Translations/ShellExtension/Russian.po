@@ -34,39 +34,44 @@ msgstr "LANG_RUSSIAN, SUBLANG_DEFAULT"
 #: ShellExtension.rc:21
 #, c-format
 msgid "1252"
-msgstr ""
+msgstr "1252"
 
 #: ShellExtension.rc:111
 #, c-format
 msgid "ShellExtension"
-msgstr ""
+msgstr "Расширение проводника"
 
 #: ShellExtension.rc:112
 #, c-format
-msgid "&WinMerge"
-msgstr ""
+msgid "Win&Merge"
+msgstr "Win&Merge"
 
 #: ShellExtension.rc:113
+#, c-format
+msgid "Compare &As"
+msgstr ""
+
+#: ShellExtension.rc:114
 #, c-format
 msgid "&Compare"
 msgstr "&Сравнить"
 
-#: ShellExtension.rc:114
+#: ShellExtension.rc:115
 #, c-format
 msgid "Compare&..."
 msgstr "Сравнить&..."
 
-#: ShellExtension.rc:115
-#, c-format
-msgid "Select &Left"
-msgstr "&Выбрать левый"
-
 #: ShellExtension.rc:116
 #, c-format
-msgid "Select &Middle"
-msgstr "Выбр&ать средний"
+msgid "Select &Left"
+msgstr "Выбрать &левый"
 
 #: ShellExtension.rc:117
+#, c-format
+msgid "Select &Middle"
+msgstr "Выбрать &средний"
+
+#: ShellExtension.rc:118
 #, c-format
 msgid "Re-select &Left"
 msgstr "Перевыбрать &левый"

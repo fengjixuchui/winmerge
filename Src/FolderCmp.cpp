@@ -78,9 +78,12 @@ int FolderCmp::prepAndCompareFiles(DIFFITEM &di)
 			nCompMethod = CMP_BINARY_CONTENT;
 		}
 		else if (m_pCtxt->m_bEnableImageCompare && (
-			di.diffFileInfo[0].size != DirItem::FILE_SIZE_NONE && m_pCtxt->m_pImgfileFilter->includeFile(di.diffFileInfo[0].filename) ||
-			di.diffFileInfo[1].size != DirItem::FILE_SIZE_NONE && m_pCtxt->m_pImgfileFilter->includeFile(di.diffFileInfo[1].filename) ||
-			nDirs > 2 && di.diffFileInfo[2].size != DirItem::FILE_SIZE_NONE && m_pCtxt->m_pImgfileFilter->includeFile(di.diffFileInfo[2].filename)))
+			di.diffFileInfo[0].size != DirItem::FILE_SIZE_NONE && m_pCtxt->m_pImgfileFilter->includeFile(
+				paths::ConcatPath(di.diffFileInfo[0].path, di.diffFileInfo[0].filename)) ||
+			di.diffFileInfo[1].size != DirItem::FILE_SIZE_NONE && m_pCtxt->m_pImgfileFilter->includeFile(
+				paths::ConcatPath(di.diffFileInfo[1].path, di.diffFileInfo[1].filename)) ||
+			nDirs > 2 && di.diffFileInfo[2].size != DirItem::FILE_SIZE_NONE && m_pCtxt->m_pImgfileFilter->includeFile(
+				paths::ConcatPath(di.diffFileInfo[2].path, di.diffFileInfo[2].filename))))
 		{
 			nCompMethod = CMP_IMAGE_CONTENT;
 		}
@@ -146,7 +149,7 @@ int FolderCmp::prepAndCompareFiles(DIFFITEM &di)
 
 		if (!std::equal(encoding + 1, encoding + nDirs, encoding))
 			bForceUTF8 = true;
-		codepage = bForceUTF8 ? CP_UTF8 : (encoding[0].m_unicoding ? CP_UTF8 : encoding[0].m_codepage);
+		codepage = bForceUTF8 ? ucr::CP_UTF_8 : (encoding[0].m_unicoding ? ucr::CP_UTF_8 : encoding[0].m_codepage);
 		for (nIndex = 0; nIndex < nDirs; nIndex++)
 		{
 		// Invoke prediff'ing plugins

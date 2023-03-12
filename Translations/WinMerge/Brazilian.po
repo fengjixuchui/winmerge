@@ -9,10 +9,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WinMerge 2.16.22\n"
+"Project-Id-Version: WinMerge\n"
 "Report-Msgid-Bugs-To: https://bugs.winmerge.org/\n"
-"POT-Creation-Date: 2021-07-30 21:57+0000\n"
-"PO-Revision-Date: 2022-08-19 15:33-0300\n"
+"POT-Creation-Date: 2023-01-08 19:20-0300\n"
+"PO-Revision-Date: \n"
 "Last-Translator: Marcello <marcello.mco@gmail.com>\n"
 "Language-Team: Felipe\n"
 "Language: pt_BR\n"
@@ -933,6 +933,9 @@ msgstr "Copiar &os Nomes dos Arquivos"
 msgid "Copy Items To Clip&board"
 msgstr "Copiar Itens Pra Área de Tran&sferência"
 
+msgid "Copy All Di&splayed Columns"
+msgstr "Copiar Todas as Colunas Exibidas"
+
 msgid "&Zip"
 msgstr "&Zip"
 
@@ -969,8 +972,8 @@ msgstr "Copiar &o Nome do Arquivo"
 msgid "&Edit Caption"
 msgstr "&Editar Legenda"
 
-msgid "&Select..."
-msgstr "&Selecionar..."
+msgid "&Open..."
+msgstr "&Abrir..."
 
 msgid "Unpacker Settings"
 msgstr "Configurações do Desempacotador"
@@ -980,6 +983,9 @@ msgstr "<Nenhum>"
 
 msgid "<Automatic>"
 msgstr "<Automático>"
+
+msgid "&Select..."
+msgstr "&Selecionar..."
 
 msgid "Prediffer Settings"
 msgstr "Configurações da Pré-Diferenciação"
@@ -1104,6 +1110,9 @@ msgstr "Procurar..."
 msgid " Folder: Filter"
 msgstr " Pasta: Filtro"
 
+msgid " File: Prediffer Plugin"
+msgstr " Arquivo: Plugin de Pré-diferenciação"
+
 msgid " File: Unpacker Plugin"
 msgstr " Arquivo: Plugin do Desempacotador"
 
@@ -1151,6 +1160,9 @@ msgstr "Fechar o Diálogo \"Selecionar Arquivos ou Pastas\" ao clicar no botão 
 
 msgid "Op&en-dialog Auto-Completion:"
 msgstr "Au&to-Conclusão do Diálogo-Abrir:"
+
+msgid "Auto-&reload modified files:"
+msgstr "Auto-&recarregar arquivos modificados:"
 
 msgid "Language:"
 msgstr "Idioma:"
@@ -1911,11 +1923,14 @@ msgstr "Integração com o Shell"
 msgid "Explorer"
 msgstr "Explorer"
 
+msgid "&Add to context menu"
+msgstr "&Adicionar ao menu de contexto"
+
 msgid "E&nable advanced menu"
 msgstr "A&tivar o menu avançado"
 
-msgid "&Add to context menu"
-msgstr "&Adicionar ao menu de contexto"
+msgid "Enable &Compare As menu"
+msgstr "Ativar menu &Comparar Como"
 
 msgid "&Register shell extension"
 msgstr "&Registrar a extensão do shell"
@@ -1960,8 +1975,8 @@ msgstr "Limite para alternar para comparação rápida (MB):"
 msgid "Threshold for switching to &binary compare (MB):"
 msgstr "Limite para alternar para comparação binária (MB):"
 
-msgid "\n&Number of compare threads (a negative value implies addition of the number of available CPU cores):"
-msgstr "\n&Número dos threads de comparação (um valor negativo implica em adição do número de núcleos da CPU disponíveis):"
+msgid "&Number of CPU cores to use:"
+msgstr "&Número de núcleos de CPU a serem utilizados:"
 
 msgid "&CSV File Patterns:"
 msgstr "Padrões do Arquivo &CSV:"
@@ -3378,6 +3393,9 @@ msgstr "Ativar o &Máximo de Largura Automática"
 msgid "We&bpage"
 msgstr "Página Web"
 
+msgid "W&rap Text"
+msgstr ""
+
 msgid "Frhed is not installed."
 msgstr "O Frhed não está instalado."
 
@@ -3571,6 +3589,12 @@ msgstr "Permitir só uma instância a ser executada"
 msgid "Allow only one instance to run and wait for the instance to terminate"
 msgstr "Permitir só uma instância a ser executada e esperar a instância encerrar"
 
+msgid "Only on window activated"
+msgstr "Apenas na janela ativada"
+
+msgid "Immediately"
+msgstr "Imediatamente"
+
 msgid "Al&l"
 msgstr "Tu&do"
 
@@ -3580,8 +3604,8 @@ msgstr "Embelezamento"
 msgid "Content Extraction"
 msgstr "Extração do Conteúdo"
 
-msgid "Visualization"
-msgstr "Visualização"
+msgid "Preview"
+msgstr "Pré-visualização"
 
 msgid "Data Query"
 msgstr "Consulta dos Dados"
@@ -3661,6 +3685,9 @@ msgstr "Ignorar os Campos do CSV"
 msgid "Ignore TSV Fields"
 msgstr "Ignorar os Campos do TSV"
 
+msgid "Ignore Leading Line Numbers"
+msgstr ""
+
 msgid "Apply Prediff Substitution Filters"
 msgstr "Aplicar os Filtros da Substituição da Pré-Diferenciação"
 
@@ -3676,8 +3703,14 @@ msgstr "Embelezar XML"
 msgid "Prettify YAML"
 msgstr "Embelezar YAML"
 
-msgid "Visualize Graphviz"
-msgstr "Visualizar Graphviz"
+msgid "Preview Graphviz"
+msgstr "Pré-visualização Graphviz"
+
+msgid "Preview Markdown"
+msgstr "Pré-visualização Markdown"
+
+msgid "Preview PlantUML"
+msgstr "Pré-visualização PlantUML"
 
 msgid "Query CSV Data..."
 msgstr "Consultar Dados do CSV..."
@@ -3769,8 +3802,14 @@ msgstr "Embelezador XML com limpeza de html5. \r\nArgumentos: Opções de linha 
 msgid "YAML Prettier with yq command. \r\nArguments: Filter or command line options passed to the yq command."
 msgstr "Embelezador YAML com comando yq. \r\nArgumentos: Filtro ou opções de linha de comando passadas ao comando yq."
 
-msgid "Graphviz Visualizer. \r\nArguments: Command line options passed to the dot command."
-msgstr "Visualizador Graphviz. \r\nArgumentos: Opções de linha de comando passadas ao comando dot."
+msgid "Graphviz Previewer. \r\nArguments: Command line options passed to the dot command."
+msgstr "Pré-visualização Graphviz. \r\nArgumentos: Opções de linha de comando passadas ao comando dot."
+
+msgid "Markdown Previewer. \r\nArguments: Command line options passed to the md2html command."
+msgstr "Visualização Markdown. \r\nArgumentos: Opções de linha de comando passadas ao comando md2html."
+
+msgid "PlantUML Previewer. \r\nArguments: Command line options passed to the plantuml.jar command."
+msgstr "Visualização PlantUML. \r\nArgumentos: Opções de linha de comando passadas ao comando plantuml.jar."
 
 msgid "CSV Querier with q command. \r\nArguments: SQL statement or command line options passed to the q command."
 msgstr "Examinador CSV com comando q. \r\nArgumentos: Comando SQL ou opções de linha de comando passados ao comando q."

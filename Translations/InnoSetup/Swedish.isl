@@ -14,12 +14,7 @@ CustomInstallation=Anpassad Installation
 AppCoreFiles=WinMerge Kärnfiler
 Filters=Filter
 Plugins=Insticksprogram
-Frhed=Frhed(Fri hex redigerare)
-WinIMerge=WinIMerge(Avbilds Skillnads/Enande)
-WinWebDiff=WinWebDiff(Web Page Diff)
-ArchiveSupport=Arkiv Stöd
 ShellExtension32bit=32-bit WinMerge ShellExtension
-Commands=GnuWin32 Patch for Windows/HTML Tidy/jq
 
 ;Localization Components
 Languages=Språk
@@ -61,11 +56,11 @@ TurkishLanguage=Turkiska menyer och dialoger
 UkrainianLanguage=Ukrainska menyer och dialoger
 
 ;Tasks
-ExplorerContextMenu=&Möjliggör samordning med Explorers menyer
-IntegrateTortoiseCVS=Integrera med &TortoiseCVS
-IntegrateTortoiseGit=Integrera med To&rtoiseGit
-IntegrateTortoiseSVN=Integrera med T&ortoiseSVN
-AddToPath=&Lägg till WinMerge-katalogen till Er systemsökväg
+ExplorerContextMenu=Möjliggör samordning med Explorers menyer
+IntegrateTortoiseCVS=Integrera med TortoiseCVS
+IntegrateTortoiseGit=Integrera med TortoiseGit
+IntegrateTortoiseSVN=Integrera med TortoiseSVN
+AddToPath=Lägg till WinMerge-katalogen till Er systemsökväg
 
 ; 3-way merge wizard page
 ThreeWayMergeWizardPageCaption=3-Vägs Enande
@@ -83,6 +78,7 @@ ViewStartMenuFolder=Visa WinMerges startkatalog
 
 ;Code Dialogs
 DeletePreviousStartMenu=Installationsprogrammet har upptäckt att Ni har ändrat sökvägen till Er startmeny från "%s" till "%s". Vill Ni ta bort den tidigare startmenykatalogen?
+ExplorerNeedsRestart=WinMerge ShellExtension requires a restart of Explorer to update. Would you like to restart Explorer?
 
 ; Project file description
 ProjectFileDesc=WinMerge Projektfil

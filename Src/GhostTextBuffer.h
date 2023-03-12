@@ -81,7 +81,7 @@ public :
 
 	// Text modification functions
 	virtual bool InsertText (CCrystalTextView * pSource, int nLine, int nPos,
-		LPCTSTR pszText, size_t cchText, int &nEndLine, int &nEndChar,
+		const tchar_t* pszText, size_t cchText, int &nEndLine, int &nEndChar,
 		int nAction = CE_ACTION_UNKNOWN, bool bHistory =true) override;
 	virtual bool DeleteText2 (CCrystalTextView * pSource, int nStartLine,
 		int nStartPos, int nEndLine, int nEndPos,
@@ -90,14 +90,14 @@ public :
 	bool InsertGhostLine (CCrystalTextView * pSource, int nLine);
 #endif
 
-	virtual void AddUndoRecord (bool bInsert, const CPoint & ptStartPos, const CPoint & ptEndPos,
-	                            LPCTSTR pszText, size_t cchText, int nActionType = CE_ACTION_UNKNOWN, CDWordArray *paSavedRevisionNumbers = nullptr) override;
+	virtual void AddUndoRecord (bool bInsert, const CEPoint & ptStartPos, const CEPoint & ptEndPos,
+	                            const tchar_t* pszText, size_t cchText, int nActionType = CE_ACTION_UNKNOWN, std::vector<uint32_t> *paSavedRevisionNumbers = nullptr) override;
 	virtual UndoRecord GetUndoRecord(int nUndoPos) const override;
-	virtual bool UndoInsert(CCrystalTextView * pSource, CPoint & ptCursorPos,
-							const CPoint apparent_ptStartPos, CPoint const apparent_ptEndPos, const UndoRecord & ur) override;
+	virtual bool UndoInsert(CCrystalTextView * pSource, CEPoint & ptCursorPos,
+							const CEPoint apparent_ptStartPos, CEPoint const apparent_ptEndPos, const UndoRecord & ur) override;
 
-	virtual CDWordArray *CopyRevisionNumbers(int nStartLine, int nEndLine) const override;
-	virtual void RestoreRevisionNumbers(int nStartLine, CDWordArray *paSavedRevisionNumbers) override;
+	virtual std::vector<uint32_t> *CopyRevisionNumbers(int nStartLine, int nEndLine) const override;
+	virtual void RestoreRevisionNumbers(int nStartLine, std::vector<uint32_t> *paSavedRevisionNumbers) override;
 
 public:
 	//@{
@@ -126,7 +126,7 @@ public:
 
 private:
 	void RecomputeRealityMapping();
-	void CountEolAndLastLineLength(const CPoint& ptStartPos, LPCTSTR pszText, size_t cchText, int& nLastLineLength, int& nEol);
+	void CountEolAndLastLineLength(const CEPoint& ptStartPos, const tchar_t* pszText, size_t cchText, int& nLastLineLength, int& nEol);
 	/** For debugging purpose */
 	void checkFlagsFromReality() const;
 

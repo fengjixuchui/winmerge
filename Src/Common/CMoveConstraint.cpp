@@ -336,6 +336,8 @@ LRESULT CALLBACK
 CMoveConstraint::ConstraintWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	void * data = GetProp(hwnd, _T("CMoveConstraintData"));
+	if (!data)
+		return DefWindowProc(hwnd, msg, wParam, lParam);
 	CMoveConstraint * constraint = reinterpret_cast<CMoveConstraint *>(data);
 
 	LRESULT lresult;
@@ -350,10 +352,19 @@ CMoveConstraint::SubclassWnd()
 	void * data = reinterpret_cast<void *>(this);
 	// this will return false if this window/wndproc combination has already
 	// been established (subclassed)
-	m_bSubclassed = true;
 	m_oldWndProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(m_hwndDlg, GWLP_WNDPROC));
-	SetWindowLongPtr(m_hwndDlg, GWLP_WNDPROC, (__int3264)(LONG_PTR)(CMoveConstraint::ConstraintWndProc));
-	SetProp(m_hwndDlg, _T("CMoveConstraintData"), data);
+	if (SetWindowLongPtr(m_hwndDlg, GWLP_WNDPROC, (__int3264)(LONG_PTR)(CMoveConstraint::ConstraintWndProc)) != 0)
+	{
+		if (SetProp(m_hwndDlg, _T("CMoveConstraintData"), data))
+		{
+			m_bSubclassed = true;
+		}
+		else
+		{
+			SetWindowLongPtr(m_hwndDlg, GWLP_WNDPROC, (__int3264)(LONG_PTR)(m_oldWndProc));
+			m_oldWndProc = nullptr;
+		}
+	}
 	return m_bSubclassed;
 }
 bool
@@ -602,7 +613,7 @@ CMoveConstraint::OnTtnNeedText(TOOLTIPTEXT * pTTT, LRESULT * plresult)
 		}
 		else
 		{
-			pTTT->lpszText = (LPTSTR)(LPCTSTR)ti.m_sText;
+			pTTT->lpszText = (tchar_t*)(const tchar_t*)ti.m_sText;
 		}
 		*plresult = true; // return `true` from original window proc
 		return true; // stop processing this message
@@ -660,7 +671,7 @@ CMoveConstraint::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, L
  * Save size (& optionally position) in registry
  */
 void
-CMoveConstraint::LoadPosition(LPCTSTR szKeyName, LPCTSTR szValueName, bool position)
+CMoveConstraint::LoadPosition(const tchar_t* szKeyName, const tchar_t* szValueName, bool position)
 {
 	m_sRegistrySubkey = szKeyName;
 	LoadPosition(szValueName, position);
@@ -670,7 +681,7 @@ CMoveConstraint::LoadPosition(LPCTSTR szKeyName, LPCTSTR szValueName, bool posit
  * Save size (& optionally position) in registry
  */
 void
-CMoveConstraint::LoadPosition(LPCTSTR szValueName, bool position)
+CMoveConstraint::LoadPosition(const tchar_t* szValueName, bool position)
 {
 	m_sRegistryValueName = szValueName;
 	m_bPersistent=true;
@@ -680,7 +691,7 @@ CMoveConstraint::LoadPosition(LPCTSTR szValueName, bool position)
 void
 CMoveConstraint::Persist(bool saving, bool position)
 {
-	LPCTSTR szSection = m_sRegistrySubkey;
+	const tchar_t* szSection = m_sRegistrySubkey;
 	if (saving)
 	{
 		CString str;
@@ -722,7 +733,7 @@ CMoveConstraint::Persist(bool saving, bool position)
 
 
 void
-CMoveConstraint::SetTip(int id, LPCTSTR szTip)
+CMoveConstraint::SetTip(int id, const tchar_t* szTip)
 {
 	tip ti;
 	ti.m_sText = szTip;

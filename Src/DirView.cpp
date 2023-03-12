@@ -60,11 +60,6 @@ using std::swap;
 using namespace std::placeholders;
 
 /**
- * @brief Location for folder compare specific help to open.
- */
-static TCHAR DirViewHelpLocation[] = _T("::/htmlhelp/Compare_dirs.html");
-
-/**
  * @brief Limit (in seconds) to signal compare is ready for user.
  * If compare takes longer than this value (in seconds) we inform
  * user about it. Current implementation uses MessageBeep(IDOK).
@@ -262,6 +257,18 @@ BEGIN_MESSAGE_MAP(CDirView, CListView)
 	ON_UPDATE_COMMAND_UI(ID_DIR_COPY_MIDDLE_TO_BROWSE, OnUpdateCtxtDirCopyTo<SIDE_MIDDLE>)
 	ON_UPDATE_COMMAND_UI(ID_DIR_COPY_RIGHT_TO_BROWSE, OnUpdateCtxtDirCopyTo<SIDE_RIGHT>)
 	// Context menu -> Move
+	ON_COMMAND(ID_DIR_MOVE_LEFT_TO_RIGHT, (OnCtxtDirMove<SIDE_LEFT, SIDE_RIGHT>))
+	ON_COMMAND(ID_DIR_MOVE_LEFT_TO_MIDDLE, (OnCtxtDirMove<SIDE_LEFT, SIDE_MIDDLE>))
+	ON_COMMAND(ID_DIR_MOVE_RIGHT_TO_LEFT, (OnCtxtDirMove<SIDE_RIGHT, SIDE_LEFT>))
+	ON_COMMAND(ID_DIR_MOVE_RIGHT_TO_MIDDLE, (OnCtxtDirMove<SIDE_RIGHT, SIDE_MIDDLE>))
+	ON_COMMAND(ID_DIR_MOVE_MIDDLE_TO_LEFT, (OnCtxtDirMove<SIDE_MIDDLE, SIDE_LEFT>))
+	ON_COMMAND(ID_DIR_MOVE_MIDDLE_TO_RIGHT, (OnCtxtDirMove<SIDE_MIDDLE, SIDE_RIGHT>))
+	ON_UPDATE_COMMAND_UI(ID_DIR_MOVE_LEFT_TO_RIGHT, (OnUpdateCtxtDirMove<SIDE_LEFT, SIDE_RIGHT>))
+	ON_UPDATE_COMMAND_UI(ID_DIR_MOVE_LEFT_TO_MIDDLE, (OnUpdateCtxtDirMove<SIDE_LEFT, SIDE_MIDDLE>))
+	ON_UPDATE_COMMAND_UI(ID_DIR_MOVE_RIGHT_TO_LEFT, (OnUpdateCtxtDirMove<SIDE_RIGHT, SIDE_LEFT>))
+	ON_UPDATE_COMMAND_UI(ID_DIR_MOVE_RIGHT_TO_MIDDLE, (OnUpdateCtxtDirMove<SIDE_RIGHT, SIDE_MIDDLE>))
+	ON_UPDATE_COMMAND_UI(ID_DIR_MOVE_MIDDLE_TO_LEFT, (OnUpdateCtxtDirMove<SIDE_MIDDLE, SIDE_LEFT>))
+	ON_UPDATE_COMMAND_UI(ID_DIR_MOVE_MIDDLE_TO_RIGHT, (OnUpdateCtxtDirMove<SIDE_MIDDLE, SIDE_RIGHT>))
 	ON_COMMAND(ID_DIR_MOVE_LEFT_TO_BROWSE, OnCtxtDirMoveTo<SIDE_LEFT>)
 	ON_COMMAND(ID_DIR_MOVE_MIDDLE_TO_BROWSE, OnCtxtDirMoveTo<SIDE_MIDDLE>)
 	ON_COMMAND(ID_DIR_MOVE_RIGHT_TO_BROWSE, OnCtxtDirMoveTo<SIDE_RIGHT>)
@@ -358,6 +365,9 @@ BEGIN_MESSAGE_MAP(CDirView, CListView)
 	ON_UPDATE_COMMAND_UI(ID_DIR_COPY_RIGHT_TO_CLIPBOARD, OnUpdateCtxtDirCopy2<SIDE_RIGHT>)
 	ON_UPDATE_COMMAND_UI(ID_DIR_COPY_BOTH_TO_CLIPBOARD, OnUpdateCtxtDirCopyBoth2)
 	ON_UPDATE_COMMAND_UI(ID_DIR_COPY_ALL_TO_CLIPBOARD, OnUpdateCtxtDirCopyBoth2)
+	// Context menu -> Copy All Displayed Columns
+	ON_COMMAND(ID_DIR_COPY_ALL_DISP_COLUMNS, OnCopyAllDisplayedColumns)
+	ON_UPDATE_COMMAND_UI(ID_DIR_COPY_ALL_DISP_COLUMNS, OnUpdateCopyAllDisplayedColumns)
 	// Status bar
 	ON_UPDATE_COMMAND_UI(ID_STATUS_DIFFNUM, OnUpdateStatusNum)
 	ON_UPDATE_COMMAND_UI(ID_STATUS_RIGHTDIR_RO, OnUpdateStatusRightRO)
@@ -394,7 +404,7 @@ void CDirView::OnInitialUpdate()
 		return 48;
 	}();
 	const int iconCY = iconCX;
-	CListView::OnInitialUpdate();
+	__super::OnInitialUpdate();
 	m_pList = &GetListCtrl();
 	m_pIList.reset(new IListCtrlImpl(m_pList->m_hWnd, m_listViewItems));
 	CDirDoc* pDoc = GetDocument();
@@ -464,7 +474,7 @@ void CDirView::OnInitialUpdate()
 
 BOOL CDirView::PreCreateWindow(CREATESTRUCT& cs)
 {
-	CListView::PreCreateWindow(cs);
+	__super::PreCreateWindow(cs);
 	cs.dwExStyle &= ~WS_EX_CLIENTEDGE;
 	return TRUE;
 }
@@ -505,7 +515,7 @@ void CDirView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		}
 	}
 	if (GetFocus() == this)
-		CListView::OnLButtonDblClk(nFlags, point);
+		__super::OnLButtonDblClk(nFlags, point);
 }
 
 /**
@@ -555,7 +565,7 @@ void CDirView::RedisplayChildren(DIFFITEM *diffpos, int level, UINT &index, int 
 			}
 			else
 			{
-				if (!ctxt.m_bRecursive || !di.diffcode.isDirectory() || !di.diffcode.existAll())
+				if (!ctxt.m_bRecursive || !di.diffcode.isDirectory() || (!di.diffcode.existAll() && !di.HasChildren()))
 				{
 					AddNewItem(index, curdiffpos, I_IMAGECALLBACK, 0);
 					index++;
@@ -695,7 +705,7 @@ void CDirView::ListContextMenu(CPoint point, int /*i*/)
 	CDirDoc* pDoc = GetDocument();
 	BCMenu menu;
 	VERIFY(menu.LoadMenu(IDR_POPUP_DIRVIEW));
-	VERIFY(menu.LoadToolbar(IDR_MAINFRAME));
+	VERIFY(menu.LoadToolbar(IDR_MAINFRAME, GetMainFrame()->GetToolbar()));
 	theApp.TranslateMenu(menu.m_hMenu);
 
 	// 1st submenu of IDR_POPUP_DIRVIEW is for item popup
@@ -703,6 +713,10 @@ void CDirView::ListContextMenu(CPoint point, int /*i*/)
 	ASSERT(pPopup != nullptr);
 
 	int sel = GetFocusedItem();
+	if (sel == -1)
+		sel = GetFirstSelectedInd();
+	if (sel == -1)
+		return;
 	const DIFFITEM& di = GetDiffItem(sel);
 	if (GetDiffContext().m_bRecursive && di.diffcode.isDirectory())
 		pPopup->RemoveMenu(ID_MERGE_COMPARE, MF_BYCOMMAND);
@@ -715,7 +729,11 @@ void CDirView::ListContextMenu(CPoint point, int /*i*/)
 		pPopup->RemoveMenu(ID_DIR_COPY_MIDDLE_TO_RIGHT, MF_BYCOMMAND);
 		pPopup->RemoveMenu(ID_DIR_COPY_MIDDLE_TO_BROWSE, MF_BYCOMMAND);
 		pPopup->RemoveMenu(ID_DIR_COPY_RIGHT_TO_MIDDLE, MF_BYCOMMAND);
+		pPopup->RemoveMenu(ID_DIR_MOVE_LEFT_TO_MIDDLE, MF_BYCOMMAND);
+		pPopup->RemoveMenu(ID_DIR_MOVE_MIDDLE_TO_LEFT, MF_BYCOMMAND);
+		pPopup->RemoveMenu(ID_DIR_MOVE_MIDDLE_TO_RIGHT, MF_BYCOMMAND);
 		pPopup->RemoveMenu(ID_DIR_MOVE_MIDDLE_TO_BROWSE, MF_BYCOMMAND);
+		pPopup->RemoveMenu(ID_DIR_MOVE_RIGHT_TO_MIDDLE, MF_BYCOMMAND);
 		pPopup->RemoveMenu(ID_DIR_DEL_MIDDLE, MF_BYCOMMAND);
 		pPopup->RemoveMenu(ID_DIR_DEL_ALL, MF_BYCOMMAND);
 		pPopup->RemoveMenu(ID_DIR_OPEN_MIDDLE, MF_BYCOMMAND);
@@ -771,7 +789,7 @@ void CDirView::HeaderContextMenu(CPoint point, int /*i*/)
 {
 	BCMenu menu;
 	VERIFY(menu.LoadMenu(IDR_POPUP_DIRVIEW));
-	VERIFY(menu.LoadToolbar(IDR_MAINFRAME));
+	VERIFY(menu.LoadToolbar(IDR_MAINFRAME, GetMainFrame()->GetToolbar()));
 	theApp.TranslateMenu(menu.m_hMenu);
 	// 2nd submenu of IDR_POPUP_DIRVIEW is for header popup
 	BCMenu* pPopup = static_cast<BCMenu *>(menu.GetSubMenu(1));
@@ -1080,6 +1098,16 @@ void CDirView::DoUpdateDirCopy(CCmdUI* pCmdUI, eMenuType menuType)
 		pCmdUI->SetText(FormatMenuItemString(srctype, dsttype, counts.count, counts.total).c_str());
 }
 
+/// Should Move to Left be enabled or disabled ? (both main menu & context menu use this)
+template<SIDE_TYPE srctype, SIDE_TYPE dsttype>
+void CDirView::DoUpdateDirMove(CCmdUI* pCmdUI, eMenuType menuType)
+{
+	Counts counts = Count(&DirActions::IsItemMovableOnTo<srctype, dsttype>);
+	pCmdUI->Enable(counts.count > 0);
+	if (menuType == eContext)
+		pCmdUI->SetText(FormatMenuItemString(srctype, dsttype, counts.count, counts.total).c_str());
+}
+
 /**
  * @brief Update any resources necessary after a GUI language change
  */
@@ -1150,7 +1178,7 @@ void CDirView::OnDestroy()
 			m_pColItems->SaveColumnWidths(std::bind(&CListCtrl::GetColumnWidth, m_pList, _1)));
 	}
 
-	CListView::OnDestroy();
+	__super::OnDestroy();
 }
 
 /**
@@ -1177,7 +1205,7 @@ void CDirView::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 			}
 		}
 	}
-	CListView::OnChar(nChar, nRepCnt, nFlags);
+	__super::OnChar(nChar, nRepCnt, nFlags);
 }
 
 /**
@@ -1227,6 +1255,7 @@ void CDirView::CollapseSubdir(int sel)
 	}
 
 	m_pList->SetRedraw(TRUE);	// Turn updating back on
+	m_pList->Invalidate();
 }
 
 /**
@@ -1241,6 +1270,9 @@ void CDirView::ExpandSubdir(int sel, bool bRecursive)
 
 	m_pList->SetRedraw(FALSE);	// Turn off updating (better performance)
 
+	const int top = m_pList->GetTopIndex();
+	const size_t num = m_listViewItems.size();
+
 	CDiffContext &ctxt = GetDiffContext();
 	dip.customFlags |= ViewCustomFlags::EXPANDED;
 	if (bRecursive)
@@ -1251,10 +1283,14 @@ void CDirView::ExpandSubdir(int sel, bool bRecursive)
 	int alldiffs;
 	RedisplayChildren(diffpos, dip.GetDepth() + 1, indext, alldiffs);
 
+	for (size_t i = 0; i < m_listViewItems.size() - num; ++i)
+		m_pList->InsertItem(sel + 1, nullptr);
+
 	SortColumnsAppropriately();
 
 	m_pList->SetRedraw(TRUE);	// Turn updating back on
 	m_pList->SetItemCount(static_cast<int>(m_listViewItems.size()));
+	m_pList->EnsureVisible(top, TRUE);
 	m_pList->Invalidate();
 }
 
@@ -1871,34 +1907,6 @@ void CDirView::DoOpenParentFolder(SIDE_TYPE stype)
 	shell::OpenParentFolder(file.c_str());
 }
 
-/// User chose (context menu) open left
-template<SIDE_TYPE stype>
-void CDirView::OnCtxtDirOpen()
-{
-	DoOpen(stype);
-}
-
-/// User chose (context menu) open left with
-template<SIDE_TYPE stype>
-void CDirView::OnCtxtDirOpenWith()
-{
-	DoOpenWith(stype);
-}
-
-/// User chose (context menu) open left with editor
-template<SIDE_TYPE stype>
-void CDirView::OnCtxtDirOpenWithEditor()
-{
-	DoOpenWithEditor(stype);
-}
-
-/// User chose (context menu) open left parent folder
-template<SIDE_TYPE stype>
-void CDirView::OnCtxtDirOpenParentFolder()
-{
-	DoOpenParentFolder(stype);
-}
-
 /// Update context menuitem "Open left | with editor"
 template<SIDE_TYPE stype>
 void CDirView::OnUpdateCtxtDirOpenWithEditor(CCmdUI* pCmdUI)
@@ -2352,7 +2360,7 @@ CDirFrame * CDirView::GetParentFrame()
 {
 	// can't verify cast without introducing more coupling
 	// (CDirView doesn't include DirFrame.h)
-	return static_cast<CDirFrame *>(CListView::GetParentFrame());
+	return static_cast<CDirFrame *>(__super::GetParentFrame());
 }
 
 void CDirView::OnRefresh()
@@ -2463,7 +2471,7 @@ BOOL CDirView::PreTranslateMessage(MSG* pMsg)
 			}
 		}
 	}
-	return CListView::PreTranslateMessage(pMsg);
+	return __super::PreTranslateMessage(pMsg);
 }
 
 void CDirView::OnUpdateRefresh(CCmdUI* pCmdUI)
@@ -2555,7 +2563,7 @@ BOOL CDirView::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	if (hdr->code == HDN_BEGINDRAG)
 		return OnHeaderBeginDrag((LPNMHEADER)hdr, pResult);
 
-	return CListView::OnNotify(wParam, lParam, pResult);
+	return __super::OnNotify(wParam, lParam, pResult);
 }
 
 BOOL CDirView::OnChildNotify(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* pResult)
@@ -2573,7 +2581,7 @@ BOOL CDirView::OnChildNotify(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* p
 			return TRUE;
 		}
 	}
-	return CListView::OnChildNotify(uMsg, wParam, lParam, pResult);
+	return __super::OnChildNotify(uMsg, wParam, lParam, pResult);
 }
 
 /**
@@ -2695,7 +2703,7 @@ void CDirView::OnTimer(UINT_PTR nIDEvent)
 		GetParentFrame()->SetStatus(msg.c_str());
 	}
 	
-	CListView::OnTimer(nIDEvent);
+	__super::OnTimer(nIDEvent);
 }
 
 /**
@@ -2712,8 +2720,7 @@ void CDirView::OnReadOnly()
 /**
  * @brief Update left-readonly menu item
  */
-template<SIDE_TYPE stype>
-void CDirView::OnUpdateReadOnly(CCmdUI* pCmdUI)
+void CDirView::OnUpdateReadOnly(CCmdUI* pCmdUI, SIDE_TYPE stype)
 {
 	const int index = SideToIndex(GetDiffContext(), stype);
 	bool bReadOnly = GetDocument()->GetReadOnly(index);
@@ -2881,7 +2888,7 @@ LRESULT CDirView::OnGenerateFileCmpReport(WPARAM wParam, LPARAM lParam)
 {
 	OpenSelection();
 
-	auto *pReportFileName = reinterpret_cast<const TCHAR *>(wParam);
+	auto *pReportFileName = reinterpret_cast<const tchar_t *>(wParam);
 	bool *pCompleted = reinterpret_cast<bool *>(lParam);
 	if (IMergeDoc * pMergeDoc = GetMainFrame()->GetActiveIMergeDoc())
 	{
@@ -3021,8 +3028,7 @@ void CDirView::AddParentFolderItem(bool bEnable)
 	AddNewItem(0, (DIFFITEM *)SPECIAL_ITEM_POS, bEnable ? DIFFIMG_DIRUP : DIFFIMG_DIRUP_DISABLE, 0);
 }
 
-template <int flag>
-void CDirView::OnCtxtDirZip()
+void CDirView::OnCtxtDirZip(int flag)
 {
 	if (!HasZipSupport())
 	{
@@ -3072,12 +3078,6 @@ void CDirView::ShowShellContextMenu(SIDE_TYPE stype)
 		pContextMenu->ReleaseShellContextMenu();
 		pFrame->m_bAutoMenuEnable = bAutoMenuEnableOld;
 	}
-}
-
-template <SIDE_TYPE stype>
-void CDirView::OnCtxtDirShellContextMenu()
-{
-	ShowShellContextMenu(stype);
 }
 
 /**
@@ -3193,8 +3193,7 @@ void CDirView::RefreshOptions()
 /**
  * @brief Copy selected item left side paths (containing filenames) to clipboard.
  */
-template<SIDE_TYPE stype>
-void CDirView::OnCopyPathnames()
+void CDirView::OnCopyPathnames(SIDE_TYPE stype)
 {
 	std::list<String> list;
 	CopyPathnames(SelBegin(), SelEnd(), std::back_inserter(list), stype, GetDiffContext());
@@ -3229,8 +3228,7 @@ void CDirView::OnUpdateCopyFilenames(CCmdUI* pCmdUI)
 /**
  * @brief Copy selected item left side to clipboard.
  */
-template<SIDE_TYPE stype>
-void CDirView::OnCopyToClipboard()
+void CDirView::OnCopyToClipboard(SIDE_TYPE stype)
 {
 	std::list<String> list;
 	CopyPathnames(SelBegin(), SelEnd(), std::back_inserter(list), stype, GetDiffContext());
@@ -3245,6 +3243,41 @@ void CDirView::OnCopyBothToClipboard()
 	std::list<String> list;
 	CopyBothPathnames(SelBegin(), SelEnd(), std::back_inserter(list), GetDiffContext());
 	PutFilesToClipboard(list, GetMainFrame()->GetSafeHwnd());
+}
+
+/**
+ * @brief Copy all displayed columns of selected items to clipboard.
+ */
+void CDirView::OnCopyAllDisplayedColumns()
+{
+	int ncols = m_pColItems->GetDispColCount();
+	String text;
+
+	int row = -1;
+	while (true)
+	{
+		row = m_pList->GetNextItem(row, LVNI_SELECTED);
+		if (row == -1)
+			break;
+		for (int col = 0; col < ncols; col++)
+		{
+			text += m_pList->GetItemText(row, col);
+			if (col < ncols - 1)
+				text += _T("\t");
+		}
+		text += _T("\r\n");
+	}
+
+	PutToClipboard(text, GetMainFrame()->GetSafeHwnd());
+}
+
+/**
+ * @brief Enable/Disable dirview Copy All Displayed Columns context menu item.
+ * @param[in] pCmdUI UI component to update.
+ */
+void CDirView::OnUpdateCopyAllDisplayedColumns(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(m_pList->GetSelectedCount() != 0);
 }
 
 /**
@@ -3348,11 +3381,25 @@ void CDirView::OnUpdateHideFilenames(CCmdUI* pCmdUI)
 	pCmdUI->Enable(m_pList->GetSelectedCount() != 0);
 }
 
+/// User chose (context men) Move from right to left
+template<SIDE_TYPE srctype, SIDE_TYPE dsttype>
+void CDirView::OnCtxtDirMove()
+{
+	DoDirAction(&DirActions::Move<srctype, dsttype>, _("Moveing files..."));
+}
+
 /// User chose (context menu) Move left to...
 template<SIDE_TYPE stype>
 void CDirView::OnCtxtDirMoveTo()
 {
 	DoDirActionTo(stype, &DirActions::MoveTo<stype>, _("Moving files..."));
+}
+
+/// Update context menu Move Right to Left item
+template<SIDE_TYPE srctype, SIDE_TYPE dsttype>
+void CDirView::OnUpdateCtxtDirMove(CCmdUI* pCmdUI)
+{
+	DoUpdateDirMove<srctype, dsttype>(pCmdUI, eContext);
 }
 
 /**
@@ -3371,7 +3418,7 @@ void CDirView::OnUpdateCtxtDirMoveTo(CCmdUI* pCmdUI)
  */
 void CDirView::OnSize(UINT nType, int cx, int cy)
 {
-	CListView::OnSize(nType, cx, cy);
+	__super::OnSize(nType, cx, cy);
 	GetDocument()->SetTitle(nullptr);
 }
 
@@ -3532,7 +3579,7 @@ void CDirView::OnODFindItem(NMHDR* pNMHDR, LRESULT* pResult)
 		{
 			DIFFITEM *di = GetItemKey(static_cast<int>(i));
 			String filename = strutils::makelower(di->diffFileInfo[0].filename);
-			if (di && _tcsncmp(text.c_str(), filename.c_str(), text.length()) == 0)
+			if (di && tc::tcsncmp(text.c_str(), filename.c_str(), text.length()) == 0)
 			{
 				*pResult = i;
 				return;
@@ -3675,15 +3722,13 @@ void CDirView::OnUpdateViewCollapseAllSubdirs(CCmdUI* pCmdUI)
 	pCmdUI->Enable(m_bTreeMode && GetDiffContext().m_bRecursive);
 }
 
-template <int pane1, int pane2>
-void CDirView::OnViewSwapPanes()
+void CDirView::OnViewSwapPanes(int pane1, int pane2)
 {
 	GetDocument()->Swap(pane1, pane2);
 	Redisplay();
 }
 
-template <int pane1, int pane2>
-void CDirView::OnUpdateViewSwapPanes(CCmdUI* pCmdUI)
+void CDirView::OnUpdateViewSwapPanes(CCmdUI* pCmdUI, int pane1, int pane2)
 {
 	pCmdUI->Enable(pane2 < GetDocument()->m_nDirs &&
 		GetDocument()->m_diffThread.GetThreadState() == CDiffThread::THREAD_COMPLETED);
@@ -3896,12 +3941,6 @@ void CDirView::OnMergeCompare(UINT nID)
 	OpenSelection(nID == ID_MERGE_COMPARE ? GetDocument() : nullptr);
 }
 
-template<SELECTIONTYPE seltype>
-void CDirView::OnMergeCompare2()
-{
-	OpenSelection(seltype);
-}
-
 void CDirView::OnMergeCompareNonHorizontally()
 {
 	int sel1, sel2, sel3;
@@ -3947,12 +3986,6 @@ void CDirView::OnUpdateMergeCompare(CCmdUI *pCmdUI)
 		(pCmdUI->m_nID >= ID_UNPACKERS_FIRST && pCmdUI->m_nID <= ID_UNPACKERS_LAST));
 
 	DoUpdateOpen(SELECTIONTYPE_NORMAL, pCmdUI, openableForDir);
-}
-
-template<SELECTIONTYPE seltype>
-void CDirView::OnUpdateMergeCompare2(CCmdUI *pCmdUI)
-{
-	DoUpdateOpen(seltype, pCmdUI);
 }
 
 void CDirView::OnUpdateNoUnpacker(CCmdUI *pCmdUI)
@@ -4172,7 +4205,7 @@ LRESULT CDirView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 		pMenu->HandleMenuMessage(message, wParam, lParam, res);
 	}
 
-	return CListView::WindowProc(message, wParam, lParam);
+	return __super::WindowProc(message, wParam, lParam);
 }
 
 /**
@@ -4288,7 +4321,7 @@ void CDirView::OnSearch()
 					if (!ufile.ReadString(line, &lossy))
 						break;
 					
-					if (_tcsstr(line.c_str(), _T("DirView")))
+					if (tc::tcsstr(line.c_str(), _T("DirView")))
 					{
 						bFound = true;
 						break;
@@ -4321,9 +4354,9 @@ void CDirView::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
 	String filesForDroping = strutils::join(list.begin(), list.end(), _T("\n")) + _T("\n");
 
 	CSharedFile file(GMEM_DDESHARE | GMEM_MOVEABLE | GMEM_ZEROINIT);
-	file.Write(filesForDroping.data(), static_cast<unsigned>((filesForDroping.length() + 1) * sizeof(TCHAR)));
+	file.Write(filesForDroping.data(), static_cast<unsigned>((filesForDroping.length() + 1) * sizeof(tchar_t)));
 	
-	HGLOBAL hMem = GlobalReAlloc(file.Detach(), (filesForDroping.length() + 1) * sizeof(TCHAR), 0);
+	HGLOBAL hMem = GlobalReAlloc(file.Detach(), (filesForDroping.length() + 1) * sizeof(tchar_t), 0);
 	if (hMem != nullptr) 
 	{
 		COleDataSource* DropData = new COleDataSource();
@@ -4343,7 +4376,7 @@ void CDirView::NameColumn(const DirColInfo *col, int subitem)
 		String s = col->GetDisplayName();
 		LV_COLUMN lvc;
 		lvc.mask = LVCF_TEXT;
-		lvc.pszText = const_cast<LPTSTR>(s.c_str());
+		lvc.pszText = const_cast<tchar_t*>(s.c_str());
 		m_pList->SetColumn(phys, &lvc);
 	}
 }
@@ -4459,12 +4492,12 @@ static String rgDispinfoText[2]; // used in function below
  *	latter case, you must not change or delete the string until the corresponding
  *	item text is deleted or two additional LVN_GETDISPINFO messages have been sent.
  */
-static LPTSTR NTAPI AllocDispinfoText(const String &s)
+static tchar_t* NTAPI AllocDispinfoText(const String &s)
 {
 	static int i = 0;
-	LPCTSTR pszText = (rgDispinfoText[i] = s).c_str();
+	const tchar_t* pszText = (rgDispinfoText[i] = s).c_str();
 	i ^= 1;
-	return (LPTSTR)pszText;
+	return (tchar_t*)pszText;
 }
 
 /**
@@ -4543,6 +4576,7 @@ void CDirView::OnEditColumns()
 				dlg.AddColumn(m_pColItems->GetColDisplayName(l), m_pColItems->GetColDescription(l), l);
 			}
 		}
+		assert(m_pColItems->GetColCount() == dlg.GetColumns().size());
 
 		// Add default order of columns for resetting to defaults
 		for (l = 0; l < m_pColItems->GetColCount(); ++l)
@@ -4604,14 +4638,12 @@ void CDirView::OnEditColumns()
 
 	if (m_pColItems->GetDispColCount() < 1)
 	{
-		// Ignore them if they didn't leave a column showing
+		// Set them back to default if they didn't leave a column showing
+		// (However, if none of the items are checked, this process will not be executed because the "OK" button in the "Display Columns" dialog cannot be pressed.)
 		m_pColItems->ResetColumnOrdering();
 	}
-	else
-	{
-		ReloadColumns();
-		Redisplay();
-	}
+	ReloadColumns();
+	Redisplay();
 }
 
 DirActions CDirView::MakeDirActions(DirActions::method_type func) const

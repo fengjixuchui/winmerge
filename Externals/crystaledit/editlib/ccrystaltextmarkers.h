@@ -5,9 +5,10 @@
  */
 #pragma once
 
+#include "SyntaxColors.h"
+#include "utils/ctchar.h"
 #include <vector>
 #include <map>
-#include "SyntaxColors.h"
 
 class CCrystalTextView;
 
@@ -26,10 +27,10 @@ public:
 	CCrystalTextMarkers();
 	~CCrystalTextMarkers();
 
-	void SetGroupName(const TCHAR *name) { m_sGroupName = name; }
+	void SetGroupName(const tchar_t *name) { m_sGroupName = name; }
 	CString GetGroupName() const { return m_sGroupName; }
-	bool SetMarker(const TCHAR *pKey, const CString& sFindWhat, DWORD dwFlags, enum COLORINDEX nBgColorIndex, bool bUserDefined = true, bool bVisible = true);
-	void DeleteMarker(const TCHAR *pKey);
+	bool SetMarker(const tchar_t *pKey, const CString& sFindWhat, DWORD dwFlags, enum COLORINDEX nBgColorIndex, bool bUserDefined = true, bool bVisible = true);
+	void DeleteMarker(const tchar_t *pKey);
 	void DeleteAllMarker();
 	void AddView(CCrystalTextView *pView);
 	void DeleteView(CCrystalTextView *pView);

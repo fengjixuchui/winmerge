@@ -7,6 +7,10 @@
 
 #include "DiffFileInfo.h"
 
+// Uncomment this to show debug information in the folder comparison window.
+// We don't use _DEBUG since the mapping of the setting (OPT_DIRVIEW_COLUMN_ORDERS or OPT_DIRVIEW3_COLUMN_ORDERS) shifts if this feature is enabled.
+//#define SHOW_DIFFITEM_DEBUG_INFO
+
 /**
  * @brief Bitfield values for binary file sides.
  * These values are used as bitfield values when determining which file(s)
@@ -133,10 +137,7 @@ public:
 	}
 	bool existAll() const
 	{
-		if ((diffcode & DIFFCODE::THREEWAY) == 0)
-			return (existsFirst() && existsSecond());
-		else
-			return (existsFirst() && existsSecond() && existsThird());
+		return ((diffcode & DIFFCODE::THREEWAY) ? DIFFCODE::ALL : DIFFCODE::BOTH) == (diffcode & DIFFCODE::ALL);
 	}
 
 	// compare result
@@ -272,11 +273,14 @@ public:
 	inline DIFFITEM *GetFwdSiblingLink() const { return Flink; }
 	inline DIFFITEM *GetFirstChild() const { return children; }
 	inline DIFFITEM *GetParentLink() const { return parent; }
+#ifdef SHOW_DIFFITEM_DEBUG_INFO
+	inline DIFFITEM *GetBackwardSiblingLink() const { return Blink; }
+#endif // SHOW_DIFFITEM_DEBUG_INFO
 
 	/** @brief Return whether the current DIFFITEM has children */
-	inline bool DIFFITEM::HasChildren() const { return (children != nullptr); }
+	inline bool HasChildren() const { return (children != nullptr); }
 	/** @brief Return whether the current DIFFITEM has children */
-	inline bool DIFFITEM::HasParent() const { return (parent != nullptr); }
+	inline bool HasParent() const { return (parent != nullptr); }
 
 //**** The `emptyitem` and its access procedures
 private:

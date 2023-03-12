@@ -39,15 +39,15 @@ std::vector<PluginForFile::PipelineItem> PluginForFile::ParsePluginPipeline(cons
 {
 	std::vector<PluginForFile::PipelineItem> result;
 	bool inQuotes = false;
-	TCHAR quoteChar = 0;
+	tchar_t quoteChar = 0;
 	std::vector<String> args;
 	String token, name;
 	errorMessage.clear();
-	const TCHAR* p = pluginPipeline.c_str();
-	while (_istspace(*p)) p++;
+	const tchar_t* p = pluginPipeline.c_str();
+	while (tc::istspace(*p)) p++;
 	while (*p)
 	{
-		TCHAR sep = 0;
+		tchar_t sep = 0;
 		while (*p)
 		{
 			if (!inQuotes)
@@ -57,7 +57,7 @@ std::vector<PluginForFile::PipelineItem> PluginForFile::ParsePluginPipeline(cons
 					inQuotes = true;
 					quoteChar = *p;
 				}
-				else if (_istspace(*p))
+				else if (tc::istspace(*p))
 				{
 					sep = *p;
 					break;
@@ -99,7 +99,7 @@ std::vector<PluginForFile::PipelineItem> PluginForFile::ParsePluginPipeline(cons
 		{
 			args.push_back(token);
 		}
-		while (_istspace(*p)) p++;
+		while (tc::istspace(*p)) p++;
 		if (*p == '|')
 			sep = *p;
 		if (sep == '|')
@@ -169,12 +169,12 @@ String PluginForFile::MakeArguments(const std::vector<String>& args, const std::
 	for (const auto& arg : args)
 	{
 		String newarg;
-		for (const TCHAR* p = arg.c_str(); *p; ++p)
+		for (const tchar_t* p = arg.c_str(); *p; ++p)
 		{
 			if (*p == '%' && *(p + 1) != 0)
 			{
 				++p;
-				TCHAR c = *p;
+				tchar_t c = *p;
 				if (c == '%')
 				{
 					newarg += '%';
@@ -308,6 +308,9 @@ bool PackingInfo::pack(String & filepath, const String& dstFilepath, const std::
 		return false;
 	}
 
+	if (m_bWebBrowser && m_PluginPipeline.empty())
+		return true;
+
 	auto itSubcode = handlerSubcodes.rbegin();
 	for (auto& [plugin, args, bWithFile] : plugins)
 	{
@@ -411,6 +414,9 @@ bool PackingInfo::Unpacking(std::vector<int> * handlerSubcodes, String & filepat
 		return false;
 	}
 
+	if (m_bWebBrowser && m_PluginPipeline.empty())
+		return true;
+
 	for (auto& [plugin, args, bWithFile] : plugins)
 	{
 		bool bHandled = false;
@@ -475,15 +481,32 @@ bool PackingInfo::Unpacking(std::vector<int> * handlerSubcodes, String & filepat
 	return true;
 }
 
-String PackingInfo::GetUnpackedFileExtension(const String& filteredFilenames) const
+String PackingInfo::GetUnpackedFileExtension(const String& filteredFilenames, int& preferredWindowType) const
 {
+	preferredWindowType = -1;
 	String ext;
 	String errorMessage;
 	std::vector<std::tuple<PluginInfo*, std::vector<String>, bool>> plugins;
 	if (GetPackUnpackPlugin(filteredFilenames, false, false, plugins, nullptr, nullptr, errorMessage))
 	{
 		for (auto& [plugin, args, bWithFile] : plugins)
+		{
 			ext += plugin->m_ext;
+			auto preferredWindowTypeStr = plugin->GetExtendedPropertyValue(_T("PreferredWindowType"));
+			if (preferredWindowTypeStr.has_value())
+			{
+				if (preferredWindowTypeStr == L"Text")
+					preferredWindowType = 0;
+				else if (preferredWindowTypeStr == L"Table")
+					preferredWindowType = 1;
+				else if (preferredWindowTypeStr == L"Binary")
+					preferredWindowType = 2;
+				else if (preferredWindowTypeStr == L"Image")
+					preferredWindowType = 3;
+				else if (preferredWindowTypeStr == L"Webpage")
+					preferredWindowType = 4;
+			}
+		}
 	}
 	return ext;
 }
@@ -674,7 +697,6 @@ bool EditorScriptInfo::TransformText(String & text, const std::vector<StringView
 		return true;
 
 	// control value
-	bool bHandled = false;
 	String errorMessage;
 	std::vector<std::tuple<PluginInfo*, std::vector<String>, int>> plugins;
 	if (!GetEditorScriptPlugin(plugins, errorMessage))

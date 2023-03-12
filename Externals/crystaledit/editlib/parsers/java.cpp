@@ -14,7 +14,7 @@
 //  - LEAVE THIS HEADER INTACT
 ////////////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
+#include "pch.h"
 #include "crystallineparser.h"
 #include "../SyntaxColors.h"
 #include "../utils/string_util.h"
@@ -23,8 +23,8 @@
 #define new DEBUG_NEW
 #endif
 
-//  C++ keywords (MSVC5.0 + POET5.0)
-static const TCHAR * s_apszJavaKeywordList[] =
+//  Java keywords
+static const tchar_t * s_apszJavaKeywordList[] =
   {
     _T ("abstract"),
     _T ("boolean"),
@@ -79,13 +79,13 @@ static const TCHAR * s_apszJavaKeywordList[] =
   };
 
 static bool
-IsJavaKeyword (const TCHAR *pszChars, int nLength)
+IsJavaKeyword (const tchar_t *pszChars, int nLength)
 {
   return ISXKEYWORD (s_apszJavaKeywordList, pszChars, nLength);
 }
 
 unsigned
-CrystalLineParser::ParseLineJava (unsigned dwCookie, const TCHAR *pszChars, int nLength, TEXTBLOCK * pBuf, int &nActualItems)
+CrystalLineParser::ParseLineJava (unsigned dwCookie, const tchar_t *pszChars, int nLength, TEXTBLOCK * pBuf, int &nActualItems)
 {
   return ParseLineCJava (dwCookie, pszChars, nLength, pBuf, nActualItems, IsJavaKeyword, nullptr);
 }

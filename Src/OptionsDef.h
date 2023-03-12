@@ -82,6 +82,7 @@ inline const String OPT_COPY_FULL_LINE {_T("Settings/CopyFullLine"s)};
 inline const String OPT_TAB_SIZE {_T("Settings/TabSize"s)};
 inline const String OPT_TAB_TYPE {_T("Settings/TabType"s)};
 inline const String OPT_WORDWRAP {_T("Settings/WordWrap"s)};
+inline const String OPT_WORDWRAP_TABLE {_T("Settings/WordWrapTable"s)};
 inline const String OPT_VIEW_LINENUMBERS {_T("Settings/ViewLineNumbers"s)};
 inline const String OPT_VIEW_FILEMARGIN {_T("Settings/ViewFileMargin"s)};
 inline const String OPT_VIEW_TOPMARGIN {_T("Settings/ViewTopMargin"s)};
@@ -113,6 +114,8 @@ inline const String OPT_CUSTOM_TEMP_PATH {_T("Settings/CustomTempPath"s)};
 
 inline const String OPT_SPLIT_HORIZONTALLY {_T("Settings/SplitHorizontally"s)};
 inline const String OPT_FILE_SIZE_THRESHOLD {_T("Settings/OPT_FILE_SIZE_THRESHOLD"s)};
+
+inline const String OPT_AUTO_RELOAD_MODIFIED_FILES {_T("Settings/AutoReloadModifiedFiles"s)};
 
 // Color options
 // The difference color

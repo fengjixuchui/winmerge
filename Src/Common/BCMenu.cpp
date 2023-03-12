@@ -109,7 +109,7 @@ static pBGR MyGetDibBits(HDC hdcSrc, HBITMAP hBmpSrc, int nx, int ny)
 	bi.bmiHeader.biClrUsed = 0;
 	bi.bmiHeader.biClrImportant = 0;
 	
-	buf = (pBGR) malloc(nx * 4 * ny);
+	buf = (pBGR) malloc(static_cast<size_t>(nx) * 4 * ny);
 	nRes = GetDIBits(hdcSrc, hBmpSrc, 0, ny, buf, &bi, DIB_RGB_COLORS);
 	if (nRes == 0) {
 		free(buf);
@@ -172,6 +172,14 @@ BCMenu::BCMenu()
 		m_hTheme = OpenThemeData(nullptr, _T("MENU"));
 		if (m_hTheme != nullptr)
 		{
+			const int dpi = CClientDC(CWnd::GetDesktopWindow()).GetDeviceCaps(LOGPIXELSX);
+			auto resizeMargins = [dpi](MARGINS& margins)
+			{
+				margins.cxLeftWidth = MulDiv(margins.cxLeftWidth, dpi, 96);
+				margins.cxRightWidth = MulDiv(margins.cxRightWidth, dpi, 96);
+				margins.cyTopHeight = MulDiv(margins.cyTopHeight, dpi, 96);
+				margins.cyBottomHeight = MulDiv(margins.cyBottomHeight, dpi, 96);
+			};
 			MARGINS marginCheckBg, marginArrow;	
 			GetThemePartSize(m_hTheme, nullptr, MENU_POPUPCHECK, 0, nullptr, TS_TRUE, &m_sizeCheck);
 			GetThemeMargins(m_hTheme, nullptr, MENU_POPUPCHECK, 0, TMT_CONTENTMARGINS, nullptr, &m_marginCheck);
@@ -180,6 +188,9 @@ BCMenu::BCMenu()
 			GetThemeMargins(m_hTheme, nullptr, MENU_POPUPCHECKBACKGROUND, 0, TMT_CONTENTMARGINS, nullptr, &marginCheckBg);
 			GetThemeMargins(m_hTheme, nullptr, MENU_POPUPSUBMENU, 0, TMT_CONTENTMARGINS, nullptr, &marginArrow);
 			GetThemeInt(m_hTheme, MENU_POPUPBACKGROUND, 0, TMT_BORDERSIZE, &m_textBorder);
+			for (auto* pmargins : { &m_marginCheck, &m_marginSeparator, &marginCheckBg, &marginArrow })
+				resizeMargins(*pmargins);
+			m_textBorder = MulDiv(m_textBorder, dpi, 96);
 			m_checkBgWidth = m_marginCheck.cxLeftWidth + m_sizeCheck.cx + m_marginCheck.cxRightWidth;
 			m_gutterWidth = marginCheckBg.cxLeftWidth + m_checkBgWidth + marginCheckBg.cxRightWidth;
 			m_arrowWidth = marginArrow.cxRightWidth;
@@ -611,7 +622,7 @@ bool BCMenu::GetBitmapFromImageList(CDC* pDC,int nIndex,CImage &bmp)
 	CDC dc;
 	dc.CreateCompatibleDC(pDC);
 	bmp.Create(m_iconX, -m_iconY, 32, CImage::createAlphaChannel);
-	memset(bmp.GetBits(), 0xff, abs(bmp.GetPitch()) * m_iconY);
+	memset(bmp.GetBits(), 0xff, static_cast<size_t>(abs(bmp.GetPitch())) * m_iconY);
 	HGDIOBJ pOldBmp = dc.SelectObject(bmp.operator HBITMAP());
 	POINT pt = {0};
 	SIZE  sz = {m_iconX, m_iconY};
@@ -897,15 +908,19 @@ BCMenuData *BCMenu::NewODMenu(UINT pos,UINT nFlags,UINT_PTR nID,CString string)
 	return mdata;
 };
 
-bool BCMenu::LoadToolbar(UINT nToolBar)
+bool BCMenu::LoadToolbar(UINT nToolBar, CToolBar* pBar)
 {
 	bool returnflag=false;
-	CToolBar bar;
+	CToolBar barIns;
+	CToolBar& bar = pBar ? *pBar : barIns;
 	
-	CWnd* pWnd = AfxGetMainWnd();
-	if (pWnd == nullptr)pWnd = CWnd::GetDesktopWindow();
-	bar.Create(pWnd);
-	if(bar.LoadToolBar(nToolBar)){
+	if (!pBar)
+	{
+		CWnd* pWnd = AfxGetMainWnd();
+		if (pWnd == nullptr)pWnd = CWnd::GetDesktopWindow();
+		bar.Create(pWnd);
+	}
+	if(pBar || bar.LoadToolBar(nToolBar)){
 		returnflag=true;
 		for(int i=0;i<bar.GetCount();++i){
 			UINT nID = bar.GetItemID(i); 
@@ -1499,11 +1514,12 @@ bool BCMenu::AddBitmapToImageList(CImageList *bmplist,UINT nResourceID)
 	}
 	else{ // a hicolor bitmap
 		CBitmap mybmp;
-		if(mybmp.LoadBitmap(nResourceID)){
-			hicolor_bitmaps=true;
-			GetTransparentBitmap(mybmp);
-			if(bmplist->Add(&mybmp,GetBitmapBackground())>=0)bReturn=true;
-		}
+		VERIFY(mybmp.LoadBitmap(nResourceID));
+		if (!mybmp.m_hObject)
+			mybmp.CreateBitmap(16, 15, 1, 32, nullptr);
+		hicolor_bitmaps=true;
+		GetTransparentBitmap(mybmp);
+		if(bmplist->Add(&mybmp,GetBitmapBackground())>=0)bReturn=true;
 	}
 	return bReturn;
 }

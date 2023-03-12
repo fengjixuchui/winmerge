@@ -38,9 +38,6 @@
 #define new DEBUG_NEW
 #endif
 
-/** @brief Location for image compare specific help to open. */
-static const TCHAR ImgMergeFrameHelpLocation[] = _T("::/htmlhelp/Compare_images.html");
-
 /////////////////////////////////////////////////////////////////////////////
 // CImgMergeFrame
 
@@ -194,6 +191,8 @@ CImgMergeFrame::CImgMergeFrame()
 
 CImgMergeFrame::~CImgMergeFrame()
 {
+	GetMainFrame()->UnwatchDocuments(this);
+
 	if (m_pDirDoc != nullptr)
 	{
 		m_pDirDoc->MergeDocClosing(this);
@@ -238,7 +237,7 @@ bool CImgMergeFrame::OpenDocs(int nFiles, const FileLocation fileloc[], const bo
 	}
 	SetTitle(nullptr);
 
-	LPCTSTR lpszWndClass = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW,
+	const tchar_t* lpszWndClass = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW,
 			::LoadCursor(nullptr, IDC_ARROW), (HBRUSH)(COLOR_WINDOW+1), nullptr);
 
 	if (!CMergeFrameCommon::Create(lpszWndClass, GetTitle(), WS_OVERLAPPEDWINDOW | WS_CHILD, rectDefault, pParent))
@@ -260,6 +259,8 @@ bool CImgMergeFrame::OpenDocs(int nFiles, const FileLocation fileloc[], const bo
 	if (GetOptionsMgr()->GetBool(OPT_SCROLL_TO_FIRST))
 		m_pImgMergeWindow->FirstDiff();
 
+	GetMainFrame()->WatchDocuments(this);
+
 	return true;
 }
 
@@ -267,7 +268,7 @@ void CImgMergeFrame::MoveOnLoad(int nPane, int)
 {
 	if (nPane < 0)
 	{
-		nPane = GetOptionsMgr()->GetInt(OPT_ACTIVE_PANE);
+		nPane = (m_nBufferType[0] != BUFFERTYPE::UNNAMED) ? GetOptionsMgr()->GetInt(OPT_ACTIVE_PANE) : 0;
 		if (nPane < 0 || nPane >= m_pImgMergeWindow->GetPaneCount())
 			nPane = 0;
 	}
@@ -408,7 +409,6 @@ void CImgMergeFrame::OnChildPaneEvent(const IImgMergeWindow::Event& evt)
 	}
 	else if (evt.eventType == IImgMergeWindow::CONTEXTMENU)
 	{
-		CImgMergeFrame *pFrame = reinterpret_cast<CImgMergeFrame *>(evt.userdata);
 		BCMenu menuPopup;
 		menuPopup.LoadMenu(MAKEINTRESOURCE(IDR_POPUP_IMG_CTXT));
 		theApp.TranslateMenu(menuPopup.m_hMenu);
@@ -461,6 +461,7 @@ BOOL CImgMergeFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 	bool bResult;
 	if (std::count(m_nBufferType, m_nBufferType + m_filePaths.GetSize(), BUFFERTYPE::UNNAMED) == m_filePaths.GetSize())
 	{
+		m_infoUnpacker.Initialize(false);
 		bResult = m_pImgMergeWindow->NewImages(m_filePaths.GetSize(), 1, 256, 256);
 	}
 	else
@@ -978,8 +979,6 @@ void CImgMergeFrame::OnFileRecompareAs(UINT nID)
 	DWORD dwFlags[3];
 	String strDesc[3];
 	int nBuffers = m_filePaths.GetSize();
-	CDirDoc *pDirDoc = m_pDirDoc->GetMainView() ? m_pDirDoc :
-		static_cast<CDirDoc*>(theApp.m_pDirTemplate->CreateNewDocument());
 	PackingInfo infoUnpacker(m_infoUnpacker.GetPluginPipeline());
 
 	for (int nBuffer = 0; nBuffer < nBuffers; ++nBuffer)
@@ -1157,10 +1156,10 @@ int CImgMergeFrame::UpdateDiffItem(CDirDoc *pDirDoc)
 	// If directory compare has results
 	if (pDirDoc && pDirDoc->HasDiffs())
 	{
-		const String &pathLeft = m_filePaths.GetLeft();
-		const String &pathRight = m_filePaths.GetRight();
-		CDiffContext &ctxt = const_cast<CDiffContext &>(pDirDoc->GetDiffContext());
 // FIXME:
+//		const String &pathLeft = m_filePaths.GetLeft();
+//		const String &pathRight = m_filePaths.GetRight();
+//		CDiffContext &ctxt = const_cast<CDiffContext &>(pDirDoc->GetDiffContext());
 //		if (UINT_PTR pos = pDirDoc->FindItemFromPaths(pathLeft, pathRight))
 //		{
 //			DIFFITEM &di = pDirDoc->GetDiffRefByKey(pos);
@@ -1493,7 +1492,7 @@ LRESULT CImgMergeFrame::OnStorePaneSizes(WPARAM wParam, LPARAM lParam)
 
 void CImgMergeFrame::OnUpdateStatusNum(CCmdUI* pCmdUI) 
 {
-	TCHAR sCnt[32] = { 0 };
+	tchar_t sCnt[32] = { 0 };
 	String s;
 	const int nDiffs = m_pImgMergeWindow->GetDiffCount();
 	
@@ -1514,7 +1513,7 @@ void CImgMergeFrame::OnUpdateStatusNum(CCmdUI* pCmdUI)
 	// - show diff number and amount of diffs
 	else
 	{
-		TCHAR sIdx[32] = { 0 };
+		tchar_t sIdx[32] = { 0 };
 		s = theApp.LoadString(IDS_DIFF_NUMBER_STATUS_FMT);
 		const int signInd = m_pImgMergeWindow->GetCurrentDiffIndex();
 		_itot_s(signInd + 1, sIdx, 10);
@@ -2360,7 +2359,7 @@ void CImgMergeFrame::OnRefresh()
 	if (UpdateDiffItem(m_pDirDoc) == 0)
 	{
 		CMergeFrameCommon::ShowIdenticalMessage(m_filePaths, true,
-			[](LPCTSTR msg, UINT flags, UINT id) -> int { return AfxMessageBox(msg, flags, id); });
+			[](const tchar_t* msg, UINT flags, UINT id) -> int { return AfxMessageBox(msg, flags, id); });
 	}
 }
 

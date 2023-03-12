@@ -931,6 +931,9 @@ msgstr "Copia nomi dei fi&le"
 msgid "Copy Items To Clip&board"
 msgstr "Copia elementi negli A&ppunti"
 
+msgid "Copy All Di&splayed Columns"
+msgstr ""
+
 msgid "&Zip"
 msgstr "Crea &zip"
 
@@ -967,8 +970,8 @@ msgstr "Copia nome del &file"
 msgid "&Edit Caption"
 msgstr ""
 
-msgid "&Select..."
-msgstr "Sele&ziona..."
+msgid "&Open..."
+msgstr ""
 
 msgid "Unpacker Settings"
 msgstr ""
@@ -978,6 +981,9 @@ msgstr "<Nessuno>"
 
 msgid "<Automatic>"
 msgstr "<Automatico>"
+
+msgid "&Select..."
+msgstr "Sele&ziona..."
 
 msgid "Prediffer Settings"
 msgstr "Impostazioni prediffer"
@@ -1102,6 +1108,9 @@ msgstr "Sfoglia..."
 msgid " Folder: Filter"
 msgstr " Cartella: Filtro"
 
+msgid " File: Prediffer Plugin"
+msgstr ""
+
 msgid " File: Unpacker Plugin"
 msgstr " File: plugin Decompressore"
 
@@ -1149,6 +1158,9 @@ msgstr "Visualizza la finestra “Seleziona file o cartelle” quando si fa clic
 
 msgid "Op&en-dialog Auto-Completion:"
 msgstr "Com&pletamento automatico selezione file:"
+
+msgid "Auto-&reload modified files:"
+msgstr ""
 
 msgid "Language:"
 msgstr "Lingua:"
@@ -1917,11 +1929,14 @@ msgstr "Integrazione shell sistema"
 msgid "Explorer"
 msgstr "Esplora risorse"
 
+msgid "&Add to context menu"
+msgstr "&Aggiungi al menu contestuale"
+
 msgid "E&nable advanced menu"
 msgstr "Abilita menu a&vanzato"
 
-msgid "&Add to context menu"
-msgstr "&Aggiungi al menu contestuale"
+msgid "Enable &Compare As menu"
+msgstr ""
 
 msgid "&Register shell extension"
 msgstr "&Registra estensione shell"
@@ -1966,10 +1981,8 @@ msgstr "Soglia per passare al confronto &rapido (MB):"
 msgid "Threshold for switching to &binary compare (MB):"
 msgstr "Soglia per passare al confronto &binario (MB):"
 
-msgid ""
-"\n&Number of compare threads (a negative value implies addition of the number of available CPU cores):"
+msgid "&Number of CPU cores to use:"
 msgstr ""
-"\n&Numero di thread per il confronto (usare valori negativi per aggiungere al numero di core della CPU):"
 
 msgid "&CSV File Patterns:"
 msgstr "Pattern file &CSV:"
@@ -3731,6 +3744,9 @@ msgstr "Abilita altezza massima &automatica"
 msgid "We&bpage"
 msgstr "Pagina we&b"
 
+msgid "W&rap Text"
+msgstr ""
+
 msgid "Frhed is not installed."
 msgstr "Frhed non è installato."
 
@@ -3932,6 +3948,12 @@ msgstr "Permetti l'esecuzione di un'unica istanza del programma"
 msgid "Allow only one instance to run and wait for the instance to terminate"
 msgstr "Permetti l'esecuzione di un'unica istanza del programma e attendi che termini"
 
+msgid "Only on window activated"
+msgstr ""
+
+msgid "Immediately"
+msgstr ""
+
 msgid "Al&l"
 msgstr ""
 
@@ -3941,8 +3963,8 @@ msgstr ""
 msgid "Content Extraction"
 msgstr "Estrazione dei contenuti"
 
-msgid "Visualization"
-msgstr "Visualizzazione"
+msgid "Preview"
+msgstr ""
 
 msgid "Data Query"
 msgstr ""
@@ -4022,6 +4044,9 @@ msgstr "Ignora campi CSV"
 msgid "Ignore TSV Fields"
 msgstr "Ignora campi TSV"
 
+msgid "Ignore Leading Line Numbers"
+msgstr ""
+
 msgid "Apply Prediff Substitution Filters"
 msgstr ""
 
@@ -4037,7 +4062,13 @@ msgstr ""
 msgid "Prettify YAML"
 msgstr ""
 
-msgid "Visualize Graphviz"
+msgid "Preview Graphviz"
+msgstr ""
+
+msgid "Preview Markdown"
+msgstr ""
+
+msgid "Preview PlantUML"
 msgstr ""
 
 msgid "Query CSV Data..."
@@ -4130,7 +4161,13 @@ msgstr ""
 msgid "YAML Prettier with yq command. \r\nArguments: Filter or command line options passed to the yq command."
 msgstr ""
 
-msgid "Graphviz Visualizer. \r\nArguments: Command line options passed to the dot command."
+msgid "Graphviz Previewer. \r\nArguments: Command line options passed to the dot command."
+msgstr ""
+
+msgid "Markdown Previewer. \r\nArguments: Command line options passed to the md2html command."
+msgstr ""
+
+msgid "PlantUML Previewer. \r\nArguments: Command line options passed to the plantuml.jar command."
 msgstr ""
 
 msgid "CSV Querier with q command. \r\nArguments: SQL statement or command line options passed to the q command."

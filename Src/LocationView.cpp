@@ -33,8 +33,6 @@ using std::vector;
 
 /** @brief Size of empty frame above and below bars (in pixels). */
 static const int Y_OFFSET = 5;
-/** @brief Size of y-margin for visible area indicator (in pixels). */
-static const long INDICATOR_MARGIN = 2;
 /** @brief Max pixels in view per line in file. */
 static const double MAX_LINEPIX = 4.0;
 /** @brief Top of difference marker, relative to difference start. */
@@ -336,22 +334,6 @@ void CLocationView::CalculateBlocksPixel(int nBlockStart, int nBlockEnd,
 	nEndY = (int)((nBlockStart + nBlockHeight) * m_lineInPix + Y_OFFSET);
 }
 
-static COLORREF GetIntermediateColor(COLORREF a, COLORREF b, float ratio)
-{
-	const int R = static_cast<int>((GetRValue(a) - GetRValue(b)) * ratio) + GetRValue(b);
-	const int G = static_cast<int>((GetGValue(a) - GetGValue(b)) * ratio) + GetGValue(b);
-	const int B = static_cast<int>((GetBValue(a) - GetBValue(b)) * ratio) + GetBValue(b);
-	return RGB(R, G, B);
-}
-
-static COLORREF GetDarkenColor(COLORREF a, double l)
-{
-	const int R = static_cast<int>(GetRValue(a) * l);
-	const int G = static_cast<int>(GetGValue(a) * l);
-	const int B = static_cast<int>(GetBValue(a) * l);
-	return RGB(R, G, B);
-}
-
 /** 
  * @brief Draw maps of files.
  *
@@ -385,8 +367,8 @@ void CLocationView::OnDraw(CDC* pDC)
 
 	CMyMemDC dc(pDC, &rc);
 
-	COLORREF cr[3] = {CLR_NONE, CLR_NONE, CLR_NONE};
-	COLORREF crt = CLR_NONE; // Text color
+	CEColor cr[3] = {CLR_NONE, CLR_NONE, CLR_NONE};
+	CEColor crt = CLR_NONE; // Text color
 	bool bwh = false;
 
 	m_movedLines.RemoveAll();
@@ -396,10 +378,10 @@ void CLocationView::OnDraw(CDC* pDC)
 
 	COLORREF clrFace    = GetBackgroundColor();
 	COLORREF clrShadow  = GetSysColor(COLOR_BTNSHADOW);
-	COLORREF clrShadow2 = GetIntermediateColor(clrFace, clrShadow, 0.9f);
-	COLORREF clrShadow3 = GetIntermediateColor(clrFace, clrShadow2, 0.5f);
-	COLORREF clrShadow4 = GetIntermediateColor(clrFace, clrShadow3, 0.5f);
-	COLORREF clrShadow5 = GetIntermediateColor(clrFace, clrShadow4, 0.5f);
+	COLORREF clrShadow2 = CEColor::GetIntermediateColor(clrFace, clrShadow, 0.9f);
+	COLORREF clrShadow3 = CEColor::GetIntermediateColor(clrFace, clrShadow2, 0.5f);
+	COLORREF clrShadow4 = CEColor::GetIntermediateColor(clrFace, clrShadow3, 0.5f);
+	COLORREF clrShadow5 = CEColor::GetIntermediateColor(clrFace, clrShadow4, 0.5f);
 
 	// Draw bar outlines
 	CPen* oldObj = (CPen*)dc.SelectStockObject(NULL_PEN);
@@ -407,7 +389,6 @@ void CLocationView::OnDraw(CDC* pDC)
 	CBrush* oldBrush = (CBrush*)dc.SelectObject(&brush);
 	for (int pane = 0; pane < pDoc->m_nBuffers; pane++)
 	{
-		int nBottom = (int)(m_lineInPix * pDoc->GetView(nGroup, pane)->GetSubLineCount() + Y_OFFSET + 1);
 		CBrush *pOldBrush = nullptr;
 		if (pDoc->IsEditedAfterRescan(pane))
 			pOldBrush = (CBrush *)dc.SelectStockObject(HOLLOW_BRUSH);
@@ -558,9 +539,9 @@ void CLocationView::DrawRect(CDC* pDC, const CRect& r, COLORREF cr, bool bSelect
 			++drawRect.bottom;
 		pDC->FillSolidRect(drawRect, cr);
 		CRect drawRect2(drawRect.left, drawRect.top, drawRect.right, drawRect.top + 1);
-		pDC->FillSolidRect(drawRect2, GetDarkenColor(cr, 0.96));
+		pDC->FillSolidRect(drawRect2, CEColor::GetDarkenColor(cr, 0.96f));
 		CRect drawRect3(drawRect.left, drawRect.bottom - 1, drawRect.right, drawRect.bottom);
-		pDC->FillSolidRect(drawRect3, GetDarkenColor(cr, 0.91));
+		pDC->FillSolidRect(drawRect3, CEColor::GetDarkenColor(cr, 0.91f));
 
 		if (bSelected)
 		{
@@ -1098,7 +1079,7 @@ void CLocationView::DrawDiffMarker(CDC* pDC, int yCoord)
 	points[2].y = yCoord + DIFFMARKER_BOTTOM;
 
 	COLORREF clrBlue = GetSysColor(COLOR_ACTIVECAPTION);
-	CPen penDarkBlue(PS_SOLID, 0, GetDarkenColor(clrBlue, 0.9));
+	CPen penDarkBlue(PS_SOLID, 0, CEColor::GetDarkenColor(clrBlue, 0.9f));
 	CPen* oldObj = (CPen*)pDC->SelectObject(&penDarkBlue);
 	CBrush brushBlue(clrBlue);
 	CBrush* pOldBrush = pDC->SelectObject(&brushBlue);

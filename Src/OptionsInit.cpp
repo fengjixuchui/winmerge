@@ -24,9 +24,9 @@
 #include "Constants.h"
 
 // Functions to copy values set by installer from HKLM to HKCU.
-static bool OpenHKLM(HKEY *key, LPCTSTR relpath = nullptr);
-static bool OpenHKCU(HKEY *key, LPCTSTR relpath = nullptr);
-static void CopyFromLMtoCU(HKEY lmKey, HKEY cuKey, LPCTSTR valname);
+static bool OpenHKLM(HKEY *key, const tchar_t* relpath = nullptr);
+static bool OpenHKCU(HKEY *key, const tchar_t* relpath = nullptr);
+static void CopyFromLMtoCU(HKEY lmKey, HKEY cuKey, const tchar_t* valname);
 
 namespace Options
 {
@@ -71,6 +71,7 @@ void Init(COptionsMgr *pOptions)
 
 	pOptions->InitOption(OPT_SYNTAX_HIGHLIGHT, true);
 	pOptions->InitOption(OPT_WORDWRAP, false);
+	pOptions->InitOption(OPT_WORDWRAP_TABLE, false);
 	pOptions->InitOption(OPT_VIEW_LINENUMBERS, false);
 	pOptions->InitOption(OPT_VIEW_WHITESPACE, false);
 	pOptions->InitOption(OPT_VIEW_EOL, false);
@@ -88,6 +89,7 @@ void Init(COptionsMgr *pOptions)
 	pOptions->InitOption(OPT_SPLIT_HORIZONTALLY, false);
 	pOptions->InitOption(OPT_RENDERING_MODE, -1, 0, 6);
 	pOptions->InitOption(OPT_FILE_SIZE_THRESHOLD, 64*1024*1024);
+	pOptions->InitOption(OPT_AUTO_RELOAD_MODIFIED_FILES, 1);
 
 	pOptions->InitOption(OPT_WORDDIFF_HIGHLIGHT, true);
 	pOptions->InitOption(OPT_BREAK_SEPARATORS, _T(".,:;?[](){}<=>`'!\"#$%&^~\\|@+-*/"));
@@ -285,9 +287,9 @@ void CopyHKLMValues()
  * @param [in] relpath Relative registry path (to WinMerge reg path) to open, or nullptr.
  * @return true if opening succeeded.
  */
-static bool OpenHKLM(HKEY *key, LPCTSTR relpath)
+static bool OpenHKLM(HKEY *key, const tchar_t* relpath)
 {
-	TCHAR valuename[256];
+	tchar_t valuename[256];
 	if (relpath)
 		wsprintf(valuename, _T("%s\\%s"), RegDir, relpath);
 	else
@@ -308,9 +310,9 @@ static bool OpenHKLM(HKEY *key, LPCTSTR relpath)
  * @param [in] relpath Relative registry path (to WinMerge reg path) to open, or nullptr.
  * @return true if opening succeeded.
  */
-static bool OpenHKCU(HKEY *key, LPCTSTR relpath)
+static bool OpenHKCU(HKEY *key, const tchar_t* relpath)
 {
-	TCHAR valuename[256];
+	tchar_t valuename[256];
 	if (relpath)
 		wsprintf(valuename, _T("%s\\%s"), RegDir, relpath);
 	else
@@ -337,7 +339,7 @@ static bool OpenHKCU(HKEY *key, LPCTSTR relpath)
  * @param [in] cuKey HKCU key to where to copy.
  * @param [in] valname Name of the value to copy.
  */
-static void CopyFromLMtoCU(HKEY lmKey, HKEY cuKey, LPCTSTR valname)
+static void CopyFromLMtoCU(HKEY lmKey, HKEY cuKey, const tchar_t* valname)
 {
 	DWORD len = 0;
 	LONG retval = RegQueryValueEx(cuKey, valname, 0, nullptr, nullptr, &len);

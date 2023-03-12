@@ -31,15 +31,19 @@
 
 #pragma once
 
-#include <vector>
+#include "parsers/crystallineparser.h"
 #include "LineInfo.h"
 #include "UndoRecord.h"
-#include "ccrystaltextview.h"
+#include "cepoint.h"
+#include <memory>
+#include <vector>
 
 #ifndef __AFXTEMPL_H__
 #pragma message("Include <afxtempl.h> in your stdafx.h to avoid this message")
 #include <afxtempl.h>
 #endif
+
+class CCrystalTextView;
 
 enum LINEFLAGS: unsigned long
 {
@@ -96,7 +100,7 @@ enum
 class EDITPADC_CLASS CUpdateContext
   {
 public :
-    virtual void RecalcPoint (CPoint & ptPoint) = 0;
+    virtual void RecalcPoint (CEPoint & ptPoint) = 0;
   };
 
 
@@ -110,8 +114,8 @@ public:
 
     int m_nSourceEncoding;
     static int m_nDefaultEncoding;
-    DWORD m_dwCurrentRevisionNumber;
-    DWORD m_dwRevisionNumberOnSave;
+    uint32_t m_dwCurrentRevisionNumber;
+    uint32_t m_dwRevisionNumberOnSave;
     bool IsTextBufferInitialized () const { return m_bInit; }
 
 protected :
@@ -123,7 +127,7 @@ protected :
     bool m_bCreateBackupFile;
     bool m_bInsertTabs;
     int  m_nTabSize;
-    int FindLineWithFlag (DWORD dwFlag) const;
+    int FindLineWithFlag (lineflags_t dwFlag) const;
 
 protected :
     enum : unsigned
@@ -135,15 +139,15 @@ protected :
 class EDITPADC_CLASS CInsertContext : public CUpdateContext
       {
 public :
-        CPoint m_ptStart, m_ptEnd;
-        virtual void RecalcPoint (CPoint & ptPoint);
+        CEPoint m_ptStart, m_ptEnd;
+        virtual void RecalcPoint (CEPoint & ptPoint);
       };
 
 class EDITPADC_CLASS CDeleteContext : public CUpdateContext
       {
 public :
-        CPoint m_ptStart, m_ptEnd;
-        virtual void RecalcPoint (CPoint & ptPoint);
+        CEPoint m_ptStart, m_ptEnd;
+        virtual void RecalcPoint (CEPoint & ptPoint);
       };
 
     //  Lines of text
@@ -157,7 +161,7 @@ public :
 
     //BEGIN SW
     /** Position where the last change was made. */
-    CPoint m_ptLastChange;
+    CEPoint m_ptLastChange;
     //END SW
 
     //  Connected views
@@ -165,8 +169,8 @@ public :
 
     // Table Editing
     bool m_bTableEditing;
-    TCHAR m_cFieldDelimiter;
-    TCHAR m_cFieldEnclosure;
+    tchar_t m_cFieldDelimiter;
+    tchar_t m_cFieldEnclosure;
     bool m_bAllowNewlinesInQuotes;
     struct SharedTableProperties
     {
@@ -176,23 +180,23 @@ public :
     std::shared_ptr<SharedTableProperties> m_pSharedTableProps;
 
     //  Helper methods
-    void InsertLine (LPCTSTR pszLine, size_t nLength, int nPosition = -1, int nCount = 1);
-    void AppendLine (int nLineIndex, LPCTSTR pszChars, size_t nLength, bool bDetectEol = true);
+    void InsertLine (const tchar_t* pszLine, size_t nLength, int nPosition = -1, int nCount = 1);
+    void AppendLine (int nLineIndex, const tchar_t* pszChars, size_t nLength, bool bDetectEol = true);
     void MoveLine(int line1, int line2, int newline1);
     void SetEmptyLine(int nPosition, int nCount = 1);
 
     //  Implementation
-    bool InternalInsertText (CCrystalTextView * pSource, int nLine, int nPos, LPCTSTR pszText, size_t cchText, int &nEndLine, int &nEndChar);
+    bool InternalInsertText (CCrystalTextView * pSource, int nLine, int nPos, const tchar_t* pszText, size_t cchText, int &nEndLine, int &nEndChar);
     bool InternalDeleteText (CCrystalTextView * pSource, int nStartLine, int nStartPos, int nEndLine, int nEndPos);
     CString StripTail (int i, size_t bytes);
 
     //  [JRT] Support For Descriptions On Undo/Redo Actions
-    virtual void AddUndoRecord (bool bInsert, const CPoint & ptStartPos, const CPoint & ptEndPos,
-                                LPCTSTR pszText, size_t cchText, int nActionType = CE_ACTION_UNKNOWN, CDWordArray *paSavedRevisionNumbers = nullptr);
+    virtual void AddUndoRecord (bool bInsert, const CEPoint & ptStartPos, const CEPoint & ptEndPos,
+                                const tchar_t* pszText, size_t cchText, int nActionType = CE_ACTION_UNKNOWN, std::vector<uint32_t> *paSavedRevisionNumbers = nullptr);
     virtual UndoRecord GetUndoRecord (int nUndoPos) const { return m_aUndoBuf[nUndoPos]; }
 
-    virtual CDWordArray *CopyRevisionNumbers(int nStartLine, int nEndLine) const;
-    virtual void RestoreRevisionNumbers(int nStartLine, CDWordArray *psaSavedRevisionNumbers);
+    virtual std::vector<uint32_t> *CopyRevisionNumbers(int nStartLine, int nEndLine) const;
+    virtual void RestoreRevisionNumbers(int nStartLine, std::vector<uint32_t> *psaSavedRevisionNumbers);
 
     //  Overridable: provide action description
     virtual bool GetActionDescription (int nAction, CString & desc) const;
@@ -208,10 +212,10 @@ public :
 
 // WinMerge has own routines for loading and saving
 #ifdef CRYSTALEDIT_ENABLELOADER
-    bool LoadFromFile (LPCTSTR pszFileName, CRLFSTYLE nCrlfStyle = CRLFSTYLE::AUTOMATIC);
+    bool LoadFromFile (const tchar_t* pszFileName, CRLFSTYLE nCrlfStyle = CRLFSTYLE::AUTOMATIC);
 #endif
 #ifdef CRYSTALEDIT_ENABLESAVER
-    bool SaveToFile(LPCTSTR pszFileName, CRLFSTYLE nCrlfStyle = CRLFSTYLE::AUTOMATIC, 
+    bool SaveToFile(const tchar_t* pszFileName, CRLFSTYLE nCrlfStyle = CRLFSTYLE::AUTOMATIC, 
     bool bClearModifiedFlag = true);
 #endif
 
@@ -231,16 +235,16 @@ public :
     int GetLineCount () const;
     int GetLineLength (int nLine) const;
     int GetFullLineLength (int nLine) const; // including EOLs
-    LPCTSTR GetLineEol (int nLine) const;
-    bool ChangeLineEol (int nLine, LPCTSTR lpEOL);
-    LPCTSTR GetLineChars (int nLine) const;
-    DWORD GetLineFlags (int nLine) const;
-    DWORD GetLineRevisionNumber (int nLine) const;
-    int GetLineWithFlag (DWORD dwFlag) const;
-    void SetLineFlag (int nLine, DWORD dwFlag, bool bSet,
+    const tchar_t* GetLineEol (int nLine) const;
+    bool ChangeLineEol (int nLine, const tchar_t* lpEOL);
+    const tchar_t* GetLineChars (int nLine) const;
+    lineflags_t GetLineFlags (int nLine) const;
+    uint32_t GetLineRevisionNumber (int nLine) const;
+    int GetLineWithFlag (lineflags_t dwFlag) const;
+    void SetLineFlag (int nLine, lineflags_t dwFlag, bool bSet,
             bool bRemoveFromPreviousLine = true, bool bUpdate=true);
     void GetText (int nStartLine, int nStartChar, int nEndLine, int nEndChar,
-            CString & text, LPCTSTR pszCRLF = nullptr, bool bExcludeInvisibleLines = true) const;
+            CString & text, const tchar_t* pszCRLF = nullptr, bool bExcludeInvisibleLines = true) const;
     virtual void GetTextWithoutEmptys (int nStartLine, int nStartChar,
             int nEndLine, int nEndChar, CString &text,
             CRLFSTYLE nCrlfStyle = CRLFSTYLE::AUTOMATIC, bool bExcludeInvisibleLines = true) const;
@@ -251,24 +255,24 @@ public :
     void SetCRLFMode (CRLFSTYLE nCRLFMode);
     /// Adjust all the lines in the buffer to the buffer default EOL Mode
     virtual bool applyEOLMode();
-    LPCTSTR GetDefaultEol() const;
-    static LPCTSTR GetStringEol(CRLFSTYLE nCRLFMode);
+    const tchar_t* GetDefaultEol() const;
+    static const tchar_t* GetStringEol(CRLFSTYLE nCRLFMode);
     bool GetReadOnly () const;
     void SetReadOnly (bool bReadOnly = true);
 
     void SetIgnoreEol(bool IgnoreEol) { m_IgnoreEol = IgnoreEol; }
 
     //  Text modification functions
-    virtual bool InsertText (CCrystalTextView * pSource, int nLine, int nPos, LPCTSTR pszText, size_t cchText, int &nEndLine, int &nEndChar, int nAction = CE_ACTION_UNKNOWN, bool bHistory = true);
+    virtual bool InsertText (CCrystalTextView * pSource, int nLine, int nPos, const tchar_t* pszText, size_t cchText, int &nEndLine, int &nEndChar, int nAction = CE_ACTION_UNKNOWN, bool bHistory = true);
     virtual bool DeleteText (CCrystalTextView * pSource, int nStartLine, int nStartPos, int nEndLine, int nEndPos, int nAction = CE_ACTION_UNKNOWN, bool bHistory = true, bool bExcludeInvisibleLines = true);
     virtual bool DeleteText2 (CCrystalTextView * pSource, int nStartLine, int nStartPos, int nEndLine, int nEndPos, int nAction = CE_ACTION_UNKNOWN, bool bHistory = true);
 
     //  Undo/Redo
     bool CanUndo () const;
     bool CanRedo () const;
-    virtual bool Undo (CCrystalTextView * pSource, CPoint & ptCursorPos);
-    virtual bool UndoInsert (CCrystalTextView * pSource, CPoint & ptCursorPos, const CPoint apparent_ptStartPos, CPoint const apparent_ptEndPos, const UndoRecord & ur);
-    virtual bool Redo (CCrystalTextView * pSource, CPoint & ptCursorPos);
+    virtual bool Undo (CCrystalTextView * pSource, CEPoint & ptCursorPos);
+    virtual bool UndoInsert (CCrystalTextView * pSource, CEPoint & ptCursorPos, const CEPoint apparent_ptStartPos, CEPoint const apparent_ptEndPos, const UndoRecord & ur);
+    virtual bool Redo (CCrystalTextView * pSource, CEPoint & ptCursorPos);
 
     //  Undo grouping
     virtual void BeginUndoGroup (bool bMergeWithPrevious = false);
@@ -278,9 +282,9 @@ public :
     /**
     Returns the position where the last changes where made.
     */
-    CPoint GetLastChangePos() const;
+    CEPoint GetLastChangePos() const;
     //END SW
-    void RestoreLastChangePos(CPoint pt);
+    void RestoreLastChangePos(CEPoint pt);
     void DeleteLine(int line, int nCount = 1);
 
 
@@ -291,7 +295,7 @@ public :
     POSITION GetRedoDescription (CString & desc, POSITION pos = nullptr) const;
 
     //  Notify all connected views about changes in name of file
-    CrystalLineParser::TextDefinition *RetypeViews (LPCTSTR lpszFileName);
+    CrystalLineParser::TextDefinition *RetypeViews (const tchar_t* lpszFileName);
     //  Notify all connected views about changes in text
     void UpdateViews (CCrystalTextView * pSource, CUpdateContext * pContext,
                       DWORD dwUpdateFlags, int nLineIndex = -1);
@@ -319,11 +323,11 @@ public :
     int  GetColumnCount (int nLineIndex) const;
     CString GetCellText (int nLineIndex, int nColumnIndex) const;
     void SetAllowNewlinesInQuotes (bool bAllowNewlinesInQuotes) { m_bAllowNewlinesInQuotes = bAllowNewlinesInQuotes; }
-    TCHAR GetAllowNewlinesInQuotes () const { return m_bAllowNewlinesInQuotes; }
-    void SetFieldDelimiter (TCHAR cFieldDelimiter) { m_cFieldDelimiter = cFieldDelimiter; }
-    TCHAR GetFieldDelimiter () const { return m_cFieldDelimiter; }
-    void SetFieldEnclosure (TCHAR cFieldEnclosure) { m_cFieldEnclosure = cFieldEnclosure; }
-    TCHAR GetFieldEnclosure () const { return m_cFieldEnclosure; }
+    tchar_t GetAllowNewlinesInQuotes () const { return m_bAllowNewlinesInQuotes; }
+    void SetFieldDelimiter (tchar_t cFieldDelimiter) { m_cFieldDelimiter = cFieldDelimiter; }
+    tchar_t GetFieldDelimiter () const { return m_cFieldDelimiter; }
+    void SetFieldEnclosure (tchar_t cFieldEnclosure) { m_cFieldEnclosure = cFieldEnclosure; }
+    tchar_t GetFieldEnclosure () const { return m_cFieldEnclosure; }
     bool GetTableEditing () const { return m_bTableEditing; }
     void SetTableEditing (bool bTableEditing) { m_bTableEditing = bTableEditing; }
     void JoinLinesForTableEditingMode ();

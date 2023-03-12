@@ -1,5 +1,221 @@
 # Change log
 
+## WinMerge 2.16.28 - 2023-02-15
+
+### Folder compare
+
+- BugFix: Fixed an issue where files with no extension were not compared if they
+    were in a folder with a '.' in the folder name.
+
+## WinMerge 2.16.26 - 2023-01-27
+
+
+### General
+
+- Fixed issue where the program would crash when certain path names were set
+    in the file path bar.
+
+### File compare
+
+- Feature request: Allow pasting when editing caption of pages (PR #1651)
+
+### Folder compare
+
+- BugFix: Filters aren't saved anywhere (#1638)
+- BugFix: Fixed issue where the Open menu item in file path bar of folder
+    comparison window was disabled.
+- Add processing to indicate that two directories are identical in the
+    "Comparison result" column when they are identical in a 3-way folder
+    comparison. (PR #1649)
+- Request: highlight the file after opening its parent folder (#1662)
+- Show/hide directories in 3-way comparison (PR #1683)
+
+### Binary compare
+
+- BugFix: Fixed issue where the Open menu item in file path bar of binary
+    comparison window was disabled.
+
+### Webpage compare
+
+- BugFix: Deleted color of Word Difference in Options dialog was not used.
+- Implemented Ignore numbers comparison option.
+
+### Options dialog
+
+- Modify the "Options (Compare > Folder)" dialog. (PR #1645)
+
+### Plugins
+
+- Add PreviewMarkdown plugin (PR #1641)
+- Add PreviewPlantUML plugin (PR #1666)
+- CompareMSExcelFiles: Added "Compare worksheets as HTML" in CompareMSExcelFiles
+    plugin options window
+- ApacheTika: Updated Apache Tika to version 2.6.0
+- ApacheTika: If Java is not installed, OpenJDK 19.0.2 will now be downloaded
+    and used.
+
+### Translations
+
+- Translation updates:
+  - Brazilian (PR #1656,#1670)
+  - Chinese Simplified (PR #1635,#1665,#1667,#1677,#1681)
+  - Corsican (PR #1674)
+  - French (PR #1640,#1679)
+  - German (PR #1660,#1671)
+  - Hungarian (PR #1664)
+  - Japanese
+  - Lithuanian (PR #1657,#1673)
+  - Polish (PR #1648)
+  - Portuguese (PR #1669)
+  - Russian (PR #1676)
+  - Slovenian
+  - Swedish (PR #1655,#1663,#1682)
+
+## WinMerge 2.16.25 - 2022-12-27
+
+### File compare
+
+- BugFix: Selection in "Replace" by regular expression doesn't work with `\n`
+    (#1556)
+- BugFix: WinMerge hangs for a certain regex search & replace action for
+    clearing all lines not containing '%' (#1575)
+- Add html5 keywords to crystaledit (PR #1565)
+- Add css keywords to crystaledit (PR #1572)
+- Preliminary exit (performance optimization) for Scrollbars calculation
+    (PR #1574, #1573)
+- Fix issue #1583 Syntax highlighting for SQL leaves many things out.
+    (PR #1591, #1583)
+- Starting Pane Consistency (#1598)
+
+### Binary compare
+
+- BugFix: Crash 0xc0000409 (#1544)
+- Binary compare: Allow 64bit versions to open files larger than 2GB
+    (PR #1549)
+
+### Folder compare
+
+- BugFix: Fix the problem that WinMerge crashes when pressing the "OK" button 
+    in the "Display Columns" dialog in the debug version. (PR #1568)
+- BugFix: Crash when copying files/folders (#1558)
+- BugFix: File Duplication Bug In Outputted Zips (#1588)
+- BugFix: Fixed problem with scrolling to unexpected position when expanding
+    folders (osdn.net #46061)
+- BugFix: Fixed incorrect links to files with # in filename in folder
+    comparison report (osdn.net #46082)
+- Changes the display processing of the "Comparison result" column for a 3-way
+    folder comparison. (PR #1545)
+- Add "Copy All Displayed Columns" to the context menu of the folder compare
+    window. (PR #1615)
+    
+### Options dialog
+
+- Added Auto-reload modified files option (PR #1611)
+
+### Translations
+
+- Translation updates:
+  - Brazilian (PR #1617,#1630)
+  - Chinese Simplified (PR #1614)
+  - Corsican (PR #1628,#1629)
+  - Galician (#1581)
+  - German (PR #1616,#1633)
+  - Hungarian (PR #1618,#1631)
+  - Lithuanian (PR #1621,#1632)
+  - Japanese
+  - Polish (PR #1566)
+  - Russian (PR #1553,#1554,#1555)
+  - Slovenian
+  - Swedish (PR #1594)
+  - Turkish (PR #1563)
+
+### Others
+
+- png optimization(loss less) (PR #1541)
+- Fields rearranged for size optimization (PR #1576)
+- refactoring Diff3.h (PR #1577)
+- Fix: Mismatch between keyword list and comments (PR #1578)
+- DiffFileData optimization for same-files (PR #1579)
+- Fixed potentially wrong SubEditList ReadOnly attribute storage; refactoring
+    (PR #1580)
+- CheckForInvalidUtf8 performance improvement; code cleanup (PR #1582)
+- Update unicoder.cpp (PR #1584)
+- unicoder.cpp light performance improvements (PR #1586)
+- Update markdown.cpp (PR #1590)
+- Add a feature for debugging. (PR #1595)
+
+## WinMerge 2.16.24 - 2022-10-27
+
+### General
+
+- BugFix: Fixed crash when displaying file menu if jump list contains invalid
+    title (osdn.net #45916)
+
+### File compare
+
+- Changed operation of displaying dialogs and context menus from status
+    bar from double-click to single-click.
+
+### Table compare
+
+- BugFix: when TSV files were displayed in table mode with word wrap enabled,
+    clicking on a character would not move the caret to that character's
+    position
+
+### Folder compare
+
+- Fixed memory leak in folder comparison when PDF files
+    were targeted for image comparison.
+
+### Options dialog
+
+- Improved translation regarding CPU cores (PR #1513)
+
+### Select Files or Folders dialog
+
+- Made it possible to specify Prediffer plugin
+
+### Plugins
+
+- BugFix: Select Plugin dialog: Fixed that "Display all plugins"
+    checkbox did not work
+
+### Project file
+
+- BugFix: Fixed comparison failure when left file path and right
+    file path in project file are URLs.
+- Allow saving following in project file.
+  - Description
+  - Window type
+  - Table delimiter
+
+### Patch Generator dialog
+
+- BugFix: The command line section in the generated patch file was garbled
+    (osdn.net #45935)
+
+### Translations
+
+- BugFix: Fix an issue where the following message displayed when two files
+    are identical in a 3-way folder comparison is not translated. (PR #1535)
+- Translation updates:
+  - Brazilian (PR #1511,#1523)
+  - Corsican (PR #1510,#1527)
+  - French (PR #1538)
+  - German (PR #1498,#1509,#1528)
+  - Hungarian (PR #1508,#1524)
+  - Japanese
+  - Lithuanian (PR #1514,#1526)
+  - Polish (PR #1525)
+  - Portuguese (PR #1529)
+  - Slovenian
+
+### Others
+
+- BugFix: Fixed English verbiage (PR #1499)
+- BugFix: typo fixed in README.md (PR #1504)
+- BugFix: Fix typo in lwdisp.c (PR #1515)
+
 ## WinMerge 2.16.23 - 2022-09-26
 
 ### General

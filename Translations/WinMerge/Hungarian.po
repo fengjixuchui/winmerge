@@ -71,7 +71,7 @@ msgid "Add this change to Substitution &Filters"
 msgstr "Adja hozzá ezt a változást a Helyettesítő szűrőkhöz"
 
 msgid "Add to &Line Filters"
-msgstr ""
+msgstr "&Hozzáadás a sorszűrőkhöz"
 
 #, c-format
 msgid "&Undo"
@@ -1134,6 +1134,9 @@ msgstr "&Fájlnevek másolása"
 msgid "Copy Items To Clip&board"
 msgstr "Elemek másolása a vágólapra"
 
+msgid "Copy All Di&splayed Columns"
+msgstr "Minden látható oszlop másolása"
+
 #, c-format
 msgid "&Zip"
 msgstr "&Zip"
@@ -1177,9 +1180,8 @@ msgstr "&Fájlnév másolása"
 msgid "&Edit Caption"
 msgstr "Felirat szerkesztése"
 
-#, c-format
-msgid "&Select..."
-msgstr "&Kiválasztás..."
+msgid "&Open..."
+msgstr "Megnyitás..."
 
 msgid "Unpacker Settings"
 msgstr "Kicsomagoló beállításai"
@@ -1191,6 +1193,10 @@ msgstr "<Nincs>"
 #, c-format
 msgid "<Automatic>"
 msgstr "<Automatikus>"
+
+#, c-format
+msgid "&Select..."
+msgstr "&Kiválasztás..."
 
 #, c-format
 msgid "Prediffer Settings"
@@ -1352,6 +1358,9 @@ msgstr "Tallózás..."
 msgid " Folder: Filter"
 msgstr " Mappa: Szűrő"
 
+msgid " File: Prediffer Plugin"
+msgstr " Fájl: Elővizsgáló bővítmény"
+
 #, c-format
 msgid " File: Unpacker Plugin"
 msgstr " Fájl: Kitömörítő bővítmény"
@@ -1411,6 +1420,9 @@ msgstr "\"Fájlok vagy könyvtárak választása\" ablak bezárása az Összehas
 #, c-format
 msgid "Op&en-dialog Auto-Completion:"
 msgstr "Automatikus kiegészítés fájl megnyitásánál:"
+
+msgid "Auto-&reload modified files:"
+msgstr "Módosított fájlok automatikus újratöltése:"
 
 #, c-format
 msgid "Language:"
@@ -2380,12 +2392,15 @@ msgid "Explorer"
 msgstr "Intéző"
 
 #, c-format
+msgid "&Add to context menu"
+msgstr "Hozzáadás a helyi menühöz"
+
+#, c-format
 msgid "E&nable advanced menu"
 msgstr "&Bővített menü engedélyezése"
 
-#, c-format
-msgid "&Add to context menu"
-msgstr "Hozzáadás a Windows helyi menühöz"
+msgid "Enable &Compare As menu"
+msgstr "Az Összehasonlítás mint menü engedélyezése"
 
 #, c-format
 msgid "&Register shell extension"
@@ -2437,12 +2452,8 @@ msgstr "A gyors összehasonlítás méretkorlátja (MB):"
 msgid "Threshold for switching to &binary compare (MB):"
 msgstr "A bináris összehasonlítás méretkorlátja (MB):"
 
-msgid ""
-"\n"
-"&Number of compare threads (a negative value implies addition of the number of available CPU cores):"
-msgstr ""
-"\n"
-"Összehasonlító szálak száma (egy negatív érték a rendelkezésre álló CPU magok igénybevételét jelenti):"
+msgid "&Number of CPU cores to use:"
+msgstr "Használandó CPU magok száma:"
 
 msgid "&CSV File Patterns:"
 msgstr "CSV típusú fájlok kiterjesztése:"
@@ -4437,6 +4448,9 @@ msgstr "Auto oszlopszélesség be"
 msgid "We&bpage"
 msgstr "Weboldal"
 
+msgid "W&rap Text"
+msgstr ""
+
 msgid "Frhed is not installed."
 msgstr "Az Frhed hexa szerkesztő nincs telepítve."
 
@@ -4638,6 +4652,12 @@ msgstr "Csak egy példány futhat egyszerre"
 msgid "Allow only one instance to run and wait for the instance to terminate"
 msgstr "Csak egy példány futhat és megvárja, amíg a példány leáll"
 
+msgid "Only on window activated"
+msgstr "Csak ablakon aktivált"
+
+msgid "Immediately"
+msgstr "Azonnal"
+
 msgid "Al&l"
 msgstr "Összes"
 
@@ -4647,8 +4667,8 @@ msgstr "Megjelenés optimalizálás"
 msgid "Content Extraction"
 msgstr "Tartalom kibontás"
 
-msgid "Visualization"
-msgstr "Megjelenítés"
+msgid "Preview"
+msgstr "Előnézet"
 
 msgid "Data Query"
 msgstr "Adatlekérdezés"
@@ -4728,6 +4748,9 @@ msgstr "CSV mezők mellőzése"
 msgid "Ignore TSV Fields"
 msgstr "TSV mezők mellőzése"
 
+msgid "Ignore Leading Line Numbers"
+msgstr ""
+
 msgid "Apply Prediff Substitution Filters"
 msgstr "Elővizsgáló helyettesítési szűrők alkalmazása"
 
@@ -4743,8 +4766,14 @@ msgstr "XML formázása"
 msgid "Prettify YAML"
 msgstr "YAML formázása"
 
-msgid "Visualize Graphviz"
-msgstr "Graphviz vizualizálás"
+msgid "Preview Graphviz"
+msgstr "Graphviz előnézet"
+
+msgid "Preview Markdown"
+msgstr "Jelölés előnézet"
+
+msgid "Preview PlantUML"
+msgstr "PlantUML előnézet"
 
 msgid "Query CSV Data..."
 msgstr "CSV adatok lekérdezése..."
@@ -4836,8 +4865,14 @@ msgstr "XML formázás tidy-html5-tel. \r\nArgumentumok: A tidy parancsnak megfe
 msgid "YAML Prettier with yq command. \r\nArguments: Filter or command line options passed to the yq command."
 msgstr "YAML formázás yq paranccsal. \r\nArgumentumok: Az yq parancsnak megfelelő szűrő vagy parancssori opciók."
 
-msgid "Graphviz Visualizer. \r\nArguments: Command line options passed to the dot command."
-msgstr "Graphviz Vizualizátor.  \r\nArgumentumok: A dot parancsnak megfelelő parancssori opciók."
+msgid "Graphviz Previewer. \r\nArguments: Command line options passed to the dot command."
+msgstr "Graphviz előnézeti program. \r\nArgumentumok: A dot parancsnak megfelelő parancssori opciók."
+
+msgid "Markdown Previewer. \r\nArguments: Command line options passed to the md2html command."
+msgstr "Jelölés előnézeti program. \r\nArgumentumok: Az md2html parancsnak megfelelő parancssori opciók."
+
+msgid "PlantUML Previewer. \r\nArguments: Command line options passed to the plantuml.jar command."
+msgstr "PlantUML előnézeti program. \r\nArgumentumok: A plantuml.jar parancsnak megfelelő parancssori opciók."
 
 msgid "CSV Querier with q command. \r\nArguments: SQL statement or command line options passed to the q command."
 msgstr "CSV Lekérdező q paranccsal.  \r\nArgumentumok: A q parancsnak megfelelő SQL utasítás vagy parancssori opciók."

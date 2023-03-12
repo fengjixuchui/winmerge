@@ -146,6 +146,8 @@ CHexMergeDoc::CHexMergeDoc()
  */
 CHexMergeDoc::~CHexMergeDoc()
 {	
+	GetMainFrame()->UnwatchDocuments(this);
+
 	if (m_pDirDoc != nullptr)
 		m_pDirDoc->MergeDocClosing(this);
 }
@@ -178,11 +180,11 @@ int CHexMergeDoc::UpdateDiffItem(CDirDoc *pDirDoc)
 		}
 	}
 	bool bDiff = false;
-	int lengthFirst = m_pView[0]->GetLength();
+	size_t lengthFirst = m_pView[0]->GetLength();
 	void *bufferFirst = m_pView[0]->GetBuffer(lengthFirst);
 	for (int nBuffer = 1; nBuffer < m_nBuffers; nBuffer++)
 	{
-		int length = m_pView[nBuffer]->GetLength();
+		size_t length = m_pView[nBuffer]->GetLength();
 		if (lengthFirst != length)
 			bDiff = true;
 		else
@@ -487,7 +489,7 @@ CString CHexMergeDoc::GetTooltipString() const
 /**
 * @brief Load one file
 */
-HRESULT CHexMergeDoc::LoadOneFile(int index, LPCTSTR filename, bool readOnly, const String& strDesc)
+HRESULT CHexMergeDoc::LoadOneFile(int index, const tchar_t* filename, bool readOnly, const String& strDesc)
 {
 	if (filename[0])
 	{
@@ -533,6 +535,8 @@ bool CHexMergeDoc::OpenDocs(int nFiles, const FileLocation fileloc[], const bool
 		if (m_nBufferType[nBuffer] == BUFFERTYPE::NORMAL || m_nBufferType[nBuffer] == BUFFERTYPE::NORMAL_NAMED)
 			++nNormalBuffer;
 	}
+	if (std::count(m_nBufferType, m_nBufferType + m_nBuffers, BUFFERTYPE::UNNAMED) == m_nBuffers)
+		m_infoUnpacker.Initialize(false);
 	if (nBuffer == nFiles)
 	{
 		// An extra ResizeWindow() on the left view aligns scroll ranges, and
@@ -549,6 +553,9 @@ bool CHexMergeDoc::OpenDocs(int nFiles, const FileLocation fileloc[], const bool
 		// Use verify macro to trap possible error in debug.
 		VERIFY(pf->DestroyWindow());
 	}
+
+	GetMainFrame()->WatchDocuments(this);
+
 	return bSucceeded;
 }
 
@@ -556,7 +563,7 @@ void CHexMergeDoc::MoveOnLoad(int nPane, int)
 {
 	if (nPane < 0)
 	{
-		nPane = GetOptionsMgr()->GetInt(OPT_ACTIVE_PANE);
+		nPane = (m_nBufferType[0] != BUFFERTYPE::UNNAMED) ? GetOptionsMgr()->GetInt(OPT_ACTIVE_PANE) : 0;
 		if (nPane < 0 || nPane >= m_nBuffers)
 			nPane = 0;
 	}
@@ -565,6 +572,16 @@ void CHexMergeDoc::MoveOnLoad(int nPane, int)
 
 	if (GetOptionsMgr()->GetBool(OPT_SCROLL_TO_FIRST))
 		m_pView[0]->SendMessage(WM_COMMAND, ID_FIRSTDIFF);
+}
+
+void CHexMergeDoc::ChangeFile(int nBuffer, const String& path, int nLineIndex)
+{
+	if (!PromptAndSaveIfNeeded(true))
+		return;
+	m_nBufferType[nBuffer] = BUFFERTYPE::NORMAL;
+	m_strDesc[nBuffer].clear();
+	m_pView[nBuffer]->ClearUndoRecords();
+	LoadOneFile(nBuffer, path.c_str(), m_pView[nBuffer]->GetReadOnly(), _T(""));
 }
 
 void CHexMergeDoc::CheckFileChanged(void)
@@ -923,7 +940,7 @@ void CHexMergeDoc::OnRefresh()
 	if (UpdateDiffItem(m_pDirDoc) == 0)
 	{
 		CMergeFrameCommon::ShowIdenticalMessage(m_filePaths, true,
-			[](LPCTSTR msg, UINT flags, UINT id) -> int { return AfxMessageBox(msg, flags, id); });
+			[](const tchar_t* msg, UINT flags, UINT id) -> int { return AfxMessageBox(msg, flags, id); });
 	}
 }
 
@@ -933,8 +950,6 @@ void CHexMergeDoc::OnFileRecompareAs(UINT nID)
 	DWORD dwFlags[3];
 	String strDesc[3];
 	int nBuffers = m_nBuffers;
-	CDirDoc *pDirDoc = m_pDirDoc->GetMainView() ? m_pDirDoc : 
-		static_cast<CDirDoc*>(theApp.m_pDirTemplate->CreateNewDocument());
 	PackingInfo infoUnpacker(m_infoUnpacker.GetPluginPipeline());
 
 	for (int nBuffer = 0; nBuffer < nBuffers; ++nBuffer)

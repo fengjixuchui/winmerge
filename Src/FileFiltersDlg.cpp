@@ -19,6 +19,7 @@
 #include "TestFilterDlg.h"
 #include "FileOrFolderSelect.h"
 #include "UniFile.h"
+#include "Constants.h"
 
 using std::vector;
 
@@ -27,10 +28,7 @@ using std::vector;
 #endif
 
 /** @brief Template file used when creating new filefilter. */
-static const TCHAR FILE_FILTER_TEMPLATE[] = _T("FileFilter.tmpl");
-
-/** @brief Location for filters specific help to open. */
-static const TCHAR FilterHelpLocation[] = _T("::/htmlhelp/Filters.html");
+static const tchar_t FILE_FILTER_TEMPLATE[] = _T("FileFilter.tmpl");
 
 /////////////////////////////////////////////////////////////////////////////
 // CFiltersDlg dialog
@@ -408,7 +406,7 @@ void FileFiltersDlg::OnBnClickedFilterfileNewbutton()
 	if (paths::DoesPathExist(templatePath) != paths::IS_EXISTING_FILE)
 	{
 		String msg = strutils::format_string2(
-			_("Cannot find file filter template file!\n\nPlease copy file %1 to WinMerge/Filters -folder:\n%2."),
+			_("Cannot find file filter template file!\n\nPlease copy file %1 to WinMerge/Filters folder:\n%2."),
 			FILE_FILTER_TEMPLATE, templatePath);
 		AfxMessageBox(msg.c_str(), MB_ICONERROR);
 		return;
@@ -435,16 +433,16 @@ void FileFiltersDlg::OnBnClickedFilterfileNewbutton()
 		_("File Filters (*.flt)|*.flt|All Files (*.*)|*.*||")))
 	{
 		// Fix file extension
-		TCHAR file[_MAX_FNAME] = {0};
-		TCHAR ext[_MAX_EXT] = {0};
-		TCHAR dir[_MAX_DIR] = {0};
-		TCHAR drive[_MAX_DRIVE] = {0};
+		tchar_t file[_MAX_FNAME] = {0};
+		tchar_t ext[_MAX_EXT] = {0};
+		tchar_t dir[_MAX_DIR] = {0};
+		tchar_t drive[_MAX_DRIVE] = {0};
 		_tsplitpath_s(s.c_str(), drive, _MAX_DRIVE, dir, _MAX_DIR, file, _MAX_FNAME, ext, _MAX_EXT);
 		if (ext[0] == '\0')
 		{
 			s += FileFilterExt;
 		}
-		else if (_tcsicmp(ext, FileFilterExt) != 0)
+		else if (tc::tcsicmp(ext, FileFilterExt) != 0)
 		{
 			s = drive;
 			s += dir;

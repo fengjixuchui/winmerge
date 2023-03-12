@@ -426,6 +426,7 @@
     <ClCompile Include="..\..\..\Externals\crystaledit\editlib\utils\string_util.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\..\Src\Common\cio.cpp" />
     <ClCompile Include="..\..\..\Src\Common\ShellFileOperations.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -500,6 +501,11 @@
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)2.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="..\..\..\Src\DirTravel.cpp" />
+    <ClCompile Include="..\..\..\Src\DirWatcher.cpp">
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)2.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
     <ClCompile Include="..\..\..\Src\Environment.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -579,6 +585,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)2.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="..\DirWatcher\DirWatcher_test.cpp" />
     <ClCompile Include="..\PropertySystem\PropertySystem_test.cpp" />
     <ClCompile Include="..\ShellFileOperations\ShellFileOperations_test.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -806,6 +813,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\Externals\crystaledit\editlib\utils\icu.hpp" />
     <ClInclude Include="..\..\..\Externals\crystaledit\editlib\utils\string_util.h" />
+    <ClInclude Include="..\..\..\Src\Common\cio.h" />
     <ClInclude Include="..\..\..\Src\Common\ShellFileOperations.h" />
     <ClInclude Include="..\..\..\Src\CompareEngines\BinaryCompare.h" />
     <ClInclude Include="..\..\..\Src\CompareEngines\ByteComparator.h" />
@@ -820,6 +828,7 @@
     <ClInclude Include="..\..\..\Src\DiffItemList.h" />
     <ClInclude Include="..\..\..\Src\DirItem.h" />
     <ClInclude Include="..\..\..\Src\DirTravel.h" />
+    <ClInclude Include="..\..\..\Src\DirWatcher.h" />
     <ClInclude Include="..\..\..\Src\Environment.h" />
     <ClInclude Include="..\..\..\Src\Common\ExConverter.h" />
     <ClInclude Include="..\..\..\Src\FileFilter.h" />

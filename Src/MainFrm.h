@@ -34,6 +34,7 @@ class DropHandler;
 class CMainFrame;
 class CImgMergeFrame;
 class CWebPageDiffFrame;
+class DirWatcher;
 
 typedef std::shared_ptr<TempFile> TempFilePtr;
 
@@ -87,8 +88,8 @@ public:
 	struct OpenTableFileParams : public OpenTextFileParams
 	{
 		virtual ~OpenTableFileParams() {}
-		std::optional<TCHAR> m_tableDelimiter;
-		std::optional<TCHAR> m_tableQuote;
+		std::optional<tchar_t> m_tableDelimiter;
+		std::optional<tchar_t> m_tableQuote;
 		std::optional<bool> m_tableAllowNewlinesInQuotes;
 	};
 
@@ -128,7 +129,7 @@ public:
 	bool m_bShowErrors; /**< Show folder compare error items? */
 	LOGFONT m_lfDiff; /**< MergeView user-selected font */
 	LOGFONT m_lfDir; /**< DirView user-selected font */
-	static const TCHAR szClassName[];
+	static const tchar_t szClassName[];
 
 // Operations
 public:
@@ -203,6 +204,10 @@ public:
 	DropHandler *GetDropHandler() const { return m_pDropHandler; }
 	const CTypedPtrArray<CPtrArray, CMDIChildWnd*>* GetChildArray() const { return &m_arrChild; }
 	IMergeDoc* GetActiveIMergeDoc();
+	DirWatcher* GetDirWatcher() { return m_pDirWatcher.get(); }
+	void WatchDocuments(IMergeDoc* pMergeDoc);
+	void UnwatchDocuments(IMergeDoc* pMergeDoc);
+	CToolBar* GetToolbar() { return &m_wndToolBar; }
 
 // Overrides
 	virtual void GetMessageString(UINT nID, CString& rMessage) const;
@@ -287,6 +292,12 @@ protected:
 		MENU_FOLDERCMP = 0x000004,
 		MENU_ALL = MENU_MAINFRM | MENU_FILECMP | MENU_FOLDERCMP
 	};
+	enum
+	{
+		AUTO_RELOAD_MODIFIED_FILES_DISABLED,
+		AUTO_RELOAD_MODIFIED_FILES_ONWINDOWACTIVATED,
+		AUTO_RELOAD_MODIFIED_FILES_IMMEDIATELY
+	};
 
 	/**
 	 * A structure attaching a menu item, icon and menu types to apply to.
@@ -305,6 +316,7 @@ protected:
 	std::unique_ptr<BCMenu> m_pWebPageMenu;
 	std::vector<TempFilePtr> m_tempFiles; /**< List of possibly needed temp files. */
 	DropHandler *m_pDropHandler;
+	std::unique_ptr<DirWatcher> m_pDirWatcher;
 
 // Generated message map functions
 protected:
@@ -330,7 +342,7 @@ protected:
 	afx_msg void OnReloadPlugins();
 	afx_msg void OnSaveConfigData();
 	template <int nFiles, unsigned nID>
-	afx_msg void OnFileNew();
+	afx_msg void OnFileNew() { DoFileNew(nID, nFiles); }
 	afx_msg void OnToolsFilters();
 	afx_msg void OnViewStatusBar();
 	afx_msg void OnUpdateViewTabBar(CCmdUI* pCmdUI);
@@ -398,7 +410,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	void addToMru(LPCTSTR szItem, LPCTSTR szRegSubKey, UINT nMaxItems = 20);
+	void addToMru(const tchar_t* szItem, const tchar_t* szRegSubKey, UINT nMaxItems = 20);
 	OpenDocList &GetAllOpenDocs();
 	MergeDocList &GetAllMergeDocs();
 	DirDocList &GetAllDirDocs();

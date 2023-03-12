@@ -493,7 +493,7 @@ int COptionsMgr::Set(const String& name, const String& value)
  * @param [in] name Option's name.
  * @param [in] value Option's new value.
  */
-int COptionsMgr::Set(const String& name, const TCHAR *value)
+int COptionsMgr::Set(const String& name, const tchar_t *value)
 {
 	return Set(name, String(value));
 }
@@ -660,10 +660,11 @@ int COptionsMgr::ExportOptions(const String& filename, const bool bHexColor /*= 
 	while (optIter != m_optionsMap.end() && retVal == COption::OPT_OK)
 	{
 		const String name(optIter->first);
-		String strVal;
+		String strVal, strType;
 		varprop::VariantValue value = optIter->second.Get();
 		if (value.GetType() == varprop::VT_BOOL)
 		{
+			strType = _T("bool");
 			if (value.GetBool())
 				strVal = _T("1");
 			else
@@ -671,6 +672,7 @@ int COptionsMgr::ExportOptions(const String& filename, const bool bHexColor /*= 
 		}
 		else if (value.GetType() == varprop::VT_INT)
 		{
+			strType = _T("int");
 			if ( bHexColor && (strutils::makelower(name).find(String(_T("color"))) != std::string::npos) )
 				strVal = strutils::format(_T("0x%06x"), value.GetInt());
 			else
@@ -678,11 +680,16 @@ int COptionsMgr::ExportOptions(const String& filename, const bool bHexColor /*= 
 		}
 		else if (value.GetType() == varprop::VT_STRING)
 		{
+			strType = _T("string");
 			strVal = EscapeValue(value.GetString());
 		}
 
 		bool bRet = !!WritePrivateProfileString(_T("WinMerge"), name.c_str(),
 				strVal.c_str(), filename.c_str());
+		if (!bRet)
+			retVal = COption::OPT_ERR;
+		bRet = !!WritePrivateProfileString(_T("WinMerge.TypeInfo"), name.c_str(),
+				strType.c_str(), filename.c_str());
 		if (!bRet)
 			retVal = COption::OPT_ERR;
 		++optIter;
@@ -705,24 +712,37 @@ int COptionsMgr::ExportOptions(const String& filename, const bool bHexColor /*= 
 int COptionsMgr::ImportOptions(const String& filename)
 {
 	int retVal = COption::OPT_OK;
-	const int BufSize = 20480; // This should be enough for a long time..
-	TCHAR buf[BufSize] = {0};
+	const int BufSize = 40960; // This should be enough for a long time..
+	std::vector<tchar_t> buf(BufSize);
 	auto oleTranslateColor = [](unsigned color) -> unsigned { return ((color & 0xffffff00) == 0x80000000) ? GetSysColor(color & 0x000000ff) : color; };
 
 	// Query keys - returns NUL separated strings
-	DWORD len = GetPrivateProfileString(_T("WinMerge"), nullptr, _T(""),buf, BufSize, filename.c_str());
+	DWORD len = GetPrivateProfileString(_T("WinMerge"), nullptr, _T(""), buf.data(), BufSize, filename.c_str());
 	if (len == 0)
 		return COption::OPT_NOTFOUND;
 
-	TCHAR *pKey = buf;
+	bool init = false;
+	tchar_t *pKey = buf.data();
 	while (*pKey != '\0')
 	{
 		varprop::VariantValue value = Get(pKey);
+		if (value.GetType() == varprop::VT_NULL)
+		{
+			init = true;
+			tchar_t strType[MAX_PATH_FULL] = {0};
+			GetPrivateProfileString(_T("WinMerge.TypeInfo"), pKey, _T(""), strType, MAX_PATH_FULL, filename.c_str());
+			if (tc::tcsicmp(strType, _T("bool")) == 0)
+				value.SetBool(false);
+			else if (tc::tcsicmp(strType, _T("int")) == 0)
+				value.SetInt(0);
+			else if (tc::tcsicmp(strType, _T("string")) == 0)
+				value.SetString(_T(""));
+		}
+
 		if (value.GetType() == varprop::VT_BOOL)
 		{
 			bool boolVal = GetPrivateProfileInt(_T("WinMerge"), pKey, 0, filename.c_str()) == 1;
 			value.SetBool(boolVal);
-			SaveOption(pKey, boolVal);
 		}
 		else if (value.GetType() == varprop::VT_INT)
 		{
@@ -730,25 +750,30 @@ int COptionsMgr::ImportOptions(const String& filename)
 			if (strutils::makelower(pKey).find(String(_T("color"))) != std::string::npos)
 				intVal = static_cast<int>(oleTranslateColor(static_cast<unsigned>(intVal)));
 			value.SetInt(intVal);
-			SaveOption(pKey, intVal);
 		}
 		else if (value.GetType() == varprop::VT_STRING)
 		{
-			TCHAR strVal[MAX_PATH_FULL] = {0};
+			tchar_t strVal[MAX_PATH_FULL] = {0};
 			GetPrivateProfileString(_T("WinMerge"), pKey, _T(""), strVal, MAX_PATH_FULL, filename.c_str());
 			String sVal = UnescapeValue(strVal);
 			value.SetString(sVal);
-			SaveOption(pKey, sVal);
 		}
-		Set(pKey, value);
 
-		pKey += _tcslen(pKey);
+		if (value.GetType() != varprop::VT_NULL)
+		{
+			if (init)
+				InitOption(pKey, value);
+			SaveOption(pKey, value);
+		}
+
+		pKey += tc::tcslen(pKey);
 
 		// Check: pointer is not past string end, and next char is not null
 		// double NUL char ends the keynames string
-		if ((pKey < buf + len) && (*(pKey + 1) != '\0'))
+		if ((pKey < buf.data() + len) && (*(pKey + 1) != '\0'))
 			pKey++;
 	}
+	FlushOptions();
 	return retVal;
 }
 
@@ -757,7 +782,7 @@ String COptionsMgr::EscapeValue(const String& text)
 	String text2;
 	for (size_t i = 0; i < text.length(); ++i)
 	{
-		TCHAR ch = text[i];
+		tchar_t ch = text[i];
 		if (ch == '\0' || ch == '\x1b' || ch == '\r' || ch == '\n')
 		{
 			text2 += '\x1b';

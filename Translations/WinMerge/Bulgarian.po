@@ -930,6 +930,9 @@ msgstr "Копиране на &файловите имена"
 msgid "Copy Items To Clip&board"
 msgstr "&Копиране елементите в системния буфер"
 
+msgid "Copy All Di&splayed Columns"
+msgstr ""
+
 msgid "&Zip"
 msgstr "&Zip"
 
@@ -966,8 +969,8 @@ msgstr "Копиране на &името"
 msgid "&Edit Caption"
 msgstr ""
 
-msgid "&Select..."
-msgstr "&Избиране…"
+msgid "&Open..."
+msgstr ""
 
 msgid "Unpacker Settings"
 msgstr "Настройки на разопаковчик"
@@ -977,6 +980,9 @@ msgstr "<Няма>"
 
 msgid "<Automatic>"
 msgstr "<Автоматично>"
+
+msgid "&Select..."
+msgstr "&Избиране…"
 
 msgid "Prediffer Settings"
 msgstr ""
@@ -1101,6 +1107,9 @@ msgstr "Разглеждане…"
 msgid " Folder: Filter"
 msgstr " Папка: Филтър"
 
+msgid " File: Prediffer Plugin"
+msgstr ""
+
 msgid " File: Unpacker Plugin"
 msgstr " Файл: добавка разопаковчик"
 
@@ -1148,6 +1157,9 @@ msgstr "Затваряне „Избиране на файлове или пап
 
 msgid "Op&en-dialog Auto-Completion:"
 msgstr "Автоматично &довършване в „Избиране на файлове или папки“:"
+
+msgid "Auto-&reload modified files:"
+msgstr ""
 
 msgid "Language:"
 msgstr "Език:"
@@ -1922,11 +1934,14 @@ msgstr "Сливане със системата"
 msgid "Explorer"
 msgstr "Explorer"
 
+msgid "&Add to context menu"
+msgstr "Добавяне в &контекстуалното меню"
+
 msgid "E&nable advanced menu"
 msgstr "Включване на &разширено меню"
 
-msgid "&Add to context menu"
-msgstr "Добавяне в &контекстуалното меню"
+msgid "Enable &Compare As menu"
+msgstr ""
 
 msgid "&Register shell extension"
 msgstr "&Регистриране на разширение на обвивката"
@@ -1971,14 +1986,8 @@ msgstr "Ограничение за превключване към &бързо 
 msgid "Threshold for switching to &binary compare (MB):"
 msgstr "Ограничение за превключване към &двоично сравняване (МБ):"
 
-msgid ""
-"\n"
-"&Number of compare threads (a negative value implies addition of the number "
-"of available CPU cores):"
+msgid "&Number of CPU cores to use:"
 msgstr ""
-"\n"
-"Брой &нишки извършващи сравняване (отрицателните стойности се добавят към "
-"броя налични ядра на CPU):"
 
 msgid "&CSV File Patterns:"
 msgstr "Шаблони за име на файл на &CSV:"
@@ -3780,6 +3789,9 @@ msgstr "Автоматична &максимална ширина"
 msgid "We&bpage"
 msgstr ""
 
+msgid "W&rap Text"
+msgstr ""
+
 msgid "Frhed is not installed."
 msgstr "Frhed не е инсталиран."
 
@@ -3979,6 +3991,12 @@ msgstr "Позволи само едно стартирано копие"
 msgid "Allow only one instance to run and wait for the instance to terminate"
 msgstr ""
 
+msgid "Only on window activated"
+msgstr ""
+
+msgid "Immediately"
+msgstr ""
+
 msgid "Al&l"
 msgstr ""
 
@@ -3988,7 +4006,7 @@ msgstr ""
 msgid "Content Extraction"
 msgstr "Извличане на съдържание"
 
-msgid "Visualization"
+msgid "Preview"
 msgstr ""
 
 msgid "Data Query"
@@ -4069,6 +4087,9 @@ msgstr ""
 msgid "Ignore TSV Fields"
 msgstr ""
 
+msgid "Ignore Leading Line Numbers"
+msgstr ""
+
 msgid "Apply Prediff Substitution Filters"
 msgstr ""
 
@@ -4084,7 +4105,13 @@ msgstr ""
 msgid "Prettify YAML"
 msgstr ""
 
-msgid "Visualize Graphviz"
+msgid "Preview Graphviz"
+msgstr ""
+
+msgid "Preview Markdown"
+msgstr ""
+
+msgid "Preview PlantUML"
 msgstr ""
 
 msgid "Query CSV Data..."
@@ -4177,7 +4204,13 @@ msgstr ""
 msgid "YAML Prettier with yq command. \r\nArguments: Filter or command line options passed to the yq command."
 msgstr ""
 
-msgid "Graphviz Visualizer. \r\nArguments: Command line options passed to the dot command."
+msgid "Graphviz Previewer. \r\nArguments: Command line options passed to the dot command."
+msgstr ""
+
+msgid "Markdown Previewer. \r\nArguments: Command line options passed to the md2html command."
+msgstr ""
+
+msgid "PlantUML Previewer. \r\nArguments: Command line options passed to the plantuml.jar command."
 msgstr ""
 
 msgid "CSV Querier with q command. \r\nArguments: SQL statement or command line options passed to the q command."

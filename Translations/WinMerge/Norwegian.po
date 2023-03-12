@@ -932,6 +932,9 @@ msgstr "Kopier &filnavn"
 msgid "Copy Items To Clip&board"
 msgstr ""
 
+msgid "Copy All Di&splayed Columns"
+msgstr ""
+
 msgid "&Zip"
 msgstr "&Zip"
 
@@ -968,8 +971,8 @@ msgstr "Kopier &filnavn"
 msgid "&Edit Caption"
 msgstr ""
 
-msgid "&Select..."
-msgstr "&Velg..."
+msgid "&Open..."
+msgstr ""
 
 msgid "Unpacker Settings"
 msgstr ""
@@ -979,6 +982,9 @@ msgstr "<Ingen>"
 
 msgid "<Automatic>"
 msgstr "<Automatisk>"
+
+msgid "&Select..."
+msgstr "&Velg..."
 
 msgid "Prediffer Settings"
 msgstr "Prediffer-innstillinger"
@@ -1103,6 +1109,9 @@ msgstr "Bla gjennom.."
 msgid " Folder: Filter"
 msgstr ""
 
+msgid " File: Prediffer Plugin"
+msgstr ""
+
 msgid " File: Unpacker Plugin"
 msgstr ""
 
@@ -1150,6 +1159,9 @@ msgstr ""
 
 msgid "Op&en-dialog Auto-Completion:"
 msgstr "Auto-fullførelse for Å&pne-dialog:"
+
+msgid "Auto-&reload modified files:"
+msgstr ""
 
 msgid "Language:"
 msgstr ""
@@ -1923,11 +1935,14 @@ msgstr "Skall-integrasjon"
 msgid "Explorer"
 msgstr "Utforsker"
 
+msgid "&Add to context menu"
+msgstr "Le&gg til i høyreklikkmeny"
+
 msgid "E&nable advanced menu"
 msgstr "&Aktiver avansert meny"
 
-msgid "&Add to context menu"
-msgstr "Le&gg til i høyreklikkmeny"
+msgid "Enable &Compare As menu"
+msgstr ""
 
 msgid "&Register shell extension"
 msgstr ""
@@ -1972,10 +1987,7 @@ msgstr ""
 msgid "Threshold for switching to &binary compare (MB):"
 msgstr ""
 
-msgid ""
-"\n"
-"&Number of compare threads (a negative value implies addition of the number "
-"of available CPU cores):"
+msgid "&Number of CPU cores to use:"
 msgstr ""
 
 msgid "&CSV File Patterns:"
@@ -3765,6 +3777,9 @@ msgstr ""
 msgid "We&bpage"
 msgstr ""
 
+msgid "W&rap Text"
+msgstr ""
+
 msgid "Frhed is not installed."
 msgstr ""
 
@@ -3961,6 +3976,12 @@ msgstr "Tillat bare en instans å kjøre"
 msgid "Allow only one instance to run and wait for the instance to terminate"
 msgstr ""
 
+msgid "Only on window activated"
+msgstr ""
+
+msgid "Immediately"
+msgstr ""
+
 msgid "Al&l"
 msgstr ""
 
@@ -3970,7 +3991,7 @@ msgstr ""
 msgid "Content Extraction"
 msgstr ""
 
-msgid "Visualization"
+msgid "Preview"
 msgstr ""
 
 msgid "Data Query"
@@ -4051,6 +4072,9 @@ msgstr ""
 msgid "Ignore TSV Fields"
 msgstr ""
 
+msgid "Ignore Leading Line Numbers"
+msgstr ""
+
 msgid "Apply Prediff Substitution Filters"
 msgstr ""
 
@@ -4066,7 +4090,13 @@ msgstr ""
 msgid "Prettify YAML"
 msgstr ""
 
-msgid "Visualize Graphviz"
+msgid "Preview Graphviz"
+msgstr ""
+
+msgid "Preview Markdown"
+msgstr ""
+
+msgid "Preview PlantUML"
 msgstr ""
 
 msgid "Query CSV Data..."
@@ -4197,9 +4227,13 @@ msgid ""
 "Arguments: Filter or command line options passed to the yq command."
 msgstr ""
 
-msgid ""
-"Graphviz Visualizer. \r\n"
-"Arguments: Command line options passed to the dot command."
+msgid "Graphviz Previewer. \r\nArguments: Command line options passed to the dot command."
+msgstr ""
+
+msgid "Markdown Previewer. \r\nArguments: Command line options passed to the md2html command."
+msgstr ""
+
+msgid "PlantUML Previewer. \r\nArguments: Command line options passed to the plantuml.jar command."
 msgstr ""
 
 msgid ""

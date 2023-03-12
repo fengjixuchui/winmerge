@@ -758,7 +758,7 @@ int CMarkdown::FileImage::GuessByteOrder(unsigned dwBOM)
 	return nByteOrder;
 }
 
-CMarkdown::FileImage::FileImage(const TCHAR *path, size_t trunc, unsigned flags)
+CMarkdown::FileImage::FileImage(const tchar_t *path, size_t trunc, unsigned flags)
 : pImage(nullptr), cbImage(0), nByteOrder(0), m_pSharedMemory(nullptr), pCopy(nullptr)
 {
 	if (flags & Mapping)
@@ -773,7 +773,7 @@ CMarkdown::FileImage::FileImage(const TCHAR *path, size_t trunc, unsigned flags)
 			TFile file(path);
 			m_pSharedMemory = new SharedMemory(file, SharedMemory::AM_READ);
 			pImage = m_pSharedMemory->begin();
-			cbImage = m_pSharedMemory->end() - m_pSharedMemory->begin();
+			cbImage = m_pSharedMemory->end() - static_cast<char *>(pImage);
 		}
 		catch (...)
 		{
@@ -799,6 +799,7 @@ CMarkdown::FileImage::FileImage(const TCHAR *path, size_t trunc, unsigned flags)
 			}
 
 			delete m_pSharedMemory;
+			m_pSharedMemory = nullptr;
 			pImage = pCopy;
 			if (pImage != nullptr)
 			{

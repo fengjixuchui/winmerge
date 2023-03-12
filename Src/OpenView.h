@@ -47,12 +47,14 @@ public:
 	CSuperComboBox	m_ctlExt;
 	CSuperComboBox	m_ctlPath[3];
 	CSuperComboBox	m_ctlUnpackerPipeline;
+	CSuperComboBox	m_ctlPredifferPipeline;
 	String m_strPath[3];
 	bool m_bReadOnly[3];
 	PathContext m_files;
 	bool	m_bRecurse;
 	String	m_strExt;
 	String	m_strUnpackerPipeline;
+	String	m_strPredifferPipeline;
 	//}}AFX_DATA
 
 // other public data
@@ -130,7 +132,7 @@ protected:
 	afx_msg void OnSwapButton();
 	afx_msg void OnEditEvent(UINT nID);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnSelectUnpacker();
+	afx_msg void OnSelectPlugin(UINT nID);
 	afx_msg void OnSelectFilter();
 	afx_msg void OnOptions();
 	afx_msg void OnDiffWhitespace(UINT nID);
@@ -152,7 +154,7 @@ protected:
 	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
 	afx_msg void OnEditAction(int msg, WPARAM wParam, LPARAM LPARAM);
 	template <int MSG, int WPARAM = 0, int LPARAM = 0>
-	afx_msg void OnEditAction();
+	afx_msg void OnEditAction() { OnEditAction(MSG, WPARAM, LPARAM); }
 	afx_msg void OnHelp();
 	afx_msg void OnDropFiles(const std::vector<String>& files);
 	afx_msg LRESULT OnUpdateStatus(WPARAM wParam, LPARAM lParam);

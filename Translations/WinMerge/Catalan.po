@@ -1132,6 +1132,9 @@ msgstr "Co&pia els noms de fitxer"
 msgid "Copy Items To Clip&board"
 msgstr "Copia els elements al porta-re&talls"
 
+msgid "Copy All Di&splayed Columns"
+msgstr ""
+
 #, c-format
 msgid "&Zip"
 msgstr "Co&mprimeix"
@@ -1175,9 +1178,8 @@ msgstr "Copia el nom del &fitxer"
 msgid "&Edit Caption"
 msgstr ""
 
-#, c-format
-msgid "&Select..."
-msgstr "T&ria..."
+msgid "&Open..."
+msgstr ""
 
 msgid "Unpacker Settings"
 msgstr "Opcions del desempaquetador"
@@ -1189,6 +1191,10 @@ msgstr "<Cap>"
 #, c-format
 msgid "<Automatic>"
 msgstr "<Automàtic>"
+
+#, c-format
+msgid "&Select..."
+msgstr "T&ria..."
 
 #, c-format
 msgid "Prediffer Settings"
@@ -1350,6 +1356,9 @@ msgstr "Nave&ga..."
 msgid " Folder: Filter"
 msgstr " Carpeta: Filtre"
 
+msgid " File: Prediffer Plugin"
+msgstr ""
+
 #, c-format
 msgid " File: Unpacker Plugin"
 msgstr " Fitxer: Connector de desempaquetament"
@@ -1409,6 +1418,9 @@ msgstr "Tanca el diàlec \"Selecciona fitxers o directoris\" al fer clic en comp
 #, c-format
 msgid "Op&en-dialog Auto-Completion:"
 msgstr "Autocompletar al diàleg d'obrir:"
+
+msgid "Auto-&reload modified files:"
+msgstr ""
 
 #, c-format
 msgid "Language:"
@@ -2378,12 +2390,15 @@ msgid "Explorer"
 msgstr "Explorador de fitxers"
 
 #, c-format
+msgid "&Add to context menu"
+msgstr "Afegeix al menú contextual"
+
+#, c-format
 msgid "E&nable advanced menu"
 msgstr "Habilita el &menú avançat"
 
-#, c-format
-msgid "&Add to context menu"
-msgstr "Afegeix al menú contextual"
+msgid "Enable &Compare As menu"
+msgstr ""
 
 #, c-format
 msgid "&Register shell extension"
@@ -2435,12 +2450,8 @@ msgstr "Llindar per realitzar una comparació ràpida (MB):"
 msgid "Threshold for switching to &binary compare (MB):"
 msgstr "Llindar per realitzar una comparació binària (MB):"
 
-msgid ""
-"\n"
-"&Number of compare threads (a negative value implies addition of the number of available CPU cores):"
+msgid "&Number of CPU cores to use:"
 msgstr ""
-"\n"
-"Quantitat de fils de comparació (un valor negatiu implica l'increment del nombre de nuclis de CPU disponibles):"
 
 msgid "&CSV File Patterns:"
 msgstr "Patrons del fitxer &CSV:"
@@ -4453,6 +4464,9 @@ msgstr "Activa l'amplada màxima automàtica"
 msgid "We&bpage"
 msgstr ""
 
+msgid "W&rap Text"
+msgstr ""
+
 msgid "Frhed is not installed."
 msgstr "L'aplicació Frhed no està instal·lada."
 
@@ -4655,6 +4669,12 @@ msgstr "Permet d'executar només una instància"
 msgid "Allow only one instance to run and wait for the instance to terminate"
 msgstr "Permet d'executar només una instància i espera que la instància acabi"
 
+msgid "Only on window activated"
+msgstr ""
+
+msgid "Immediately"
+msgstr ""
+
 msgid "Al&l"
 msgstr "Tot"
 
@@ -4664,8 +4684,8 @@ msgstr "Embellir"
 msgid "Content Extraction"
 msgstr "Extracció del contingut"
 
-msgid "Visualization"
-msgstr "Visualització"
+msgid "Preview"
+msgstr ""
 
 msgid "Data Query"
 msgstr "Consulta de dades"
@@ -4745,6 +4765,9 @@ msgstr "Ignora els camps CSV"
 msgid "Ignore TSV Fields"
 msgstr "Ignora els camps TSV"
 
+msgid "Ignore Leading Line Numbers"
+msgstr ""
+
 msgid "Apply Prediff Substitution Filters"
 msgstr "Aplíca els filtres de substitució de la prediferenciació"
 
@@ -4760,8 +4783,14 @@ msgstr "Embelleix XML"
 msgid "Prettify YAML"
 msgstr "Embelleix YAML"
 
-msgid "Visualize Graphviz"
-msgstr "Visualitza al Graphviz"
+msgid "Preview Graphviz"
+msgstr ""
+
+msgid "Preview Markdown"
+msgstr ""
+
+msgid "Preview PlantUML"
+msgstr ""
 
 msgid "Query CSV Data..."
 msgstr "Consulta dades en CSV..."
@@ -4927,12 +4956,14 @@ msgstr ""
 "Embellidor de format YAML amb la comanda yq.\n"
 "Arguments: Filtre o línia de comandes a utilitzar amb la comanda yq."
 
-msgid ""
-"Graphviz Visualizer. \r\n"
-"Arguments: Command line options passed to the dot command."
+msgid "Graphviz Previewer. \r\nArguments: Command line options passed to the dot command."
 msgstr ""
-"Visualitzador Graphviz.\r\n"
-"Arguments: Línia de comandes a utilitzar amb la comanda dot."
+
+msgid "Markdown Previewer. \r\nArguments: Command line options passed to the md2html command."
+msgstr ""
+
+msgid "PlantUML Previewer. \r\nArguments: Command line options passed to the plantuml.jar command."
+msgstr ""
 
 msgid ""
 "CSV Querier with q command. \r\n"

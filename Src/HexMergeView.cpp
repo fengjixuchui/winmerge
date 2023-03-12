@@ -20,13 +20,11 @@
 #include "OptionsDef.h"
 #include "OptionsMgr.h"
 #include "Environment.h"
+#include "Constants.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-/** @brief Location for hex compare specific help to open. */
-static TCHAR HexMergeViewHelpLocation[] = _T("::/htmlhelp/Compare_bin.html");
 
 /**
  * @brief Turn bool api result into success/error code
@@ -79,6 +77,7 @@ BEGIN_MESSAGE_MAP(CHexMergeView, CView)
 	ON_COMMAND(ID_EDIT_PASTE, OnEditPaste)
 	ON_COMMAND(ID_EDIT_CLEAR, OnEditClear)
 	ON_COMMAND(ID_EDIT_SELECT_ALL, OnEditSelectAll)
+	ON_COMMAND(ID_EDIT_WMGOTO, OnEditGoto)
 	// [Merge] menu
 	ON_COMMAND(ID_FIRSTDIFF, OnFirstdiff)
 	ON_COMMAND(ID_LASTDIFF, OnLastdiff)
@@ -233,7 +232,7 @@ void CHexMergeView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* 
 /**
  * @brief Get pointer to control's content buffer
  */
-BYTE *CHexMergeView::GetBuffer(int length)
+BYTE *CHexMergeView::GetBuffer(size_t length)
 {
 	return m_pif->get_buffer(length);
 }
@@ -241,7 +240,7 @@ BYTE *CHexMergeView::GetBuffer(int length)
 /**
  * @brief Get length of control's content buffer
  */
-int CHexMergeView::GetLength()
+size_t CHexMergeView::GetLength()
 {
 	return m_pif->get_length();
 }
@@ -251,7 +250,7 @@ int CHexMergeView::GetLength()
  * @param [in] path File to check
  * @return `true` if file is changed.
  */
-IMergeDoc::FileChange CHexMergeView::IsFileChangedOnDisk(LPCTSTR path)
+IMergeDoc::FileChange CHexMergeView::IsFileChangedOnDisk(const tchar_t* path)
 {
 	DiffFileInfo dfi;
 	if (!dfi.Update(path))
@@ -269,7 +268,7 @@ IMergeDoc::FileChange CHexMergeView::IsFileChangedOnDisk(LPCTSTR path)
 /**
  * @brief Load file
  */
-HRESULT CHexMergeView::LoadFile(LPCTSTR path)
+HRESULT CHexMergeView::LoadFile(const tchar_t* path)
 {
 	CHexMergeDoc *pDoc = static_cast<CHexMergeDoc *>(GetDocument());
 	String strTempFileName = path;
@@ -281,14 +280,24 @@ HRESULT CHexMergeView::LoadFile(LPCTSTR path)
 	HRESULT hr = SE(h != INVALID_HANDLE_VALUE);
 	if (h == INVALID_HANDLE_VALUE)
 		return hr;
-	DWORD length = GetFileSize(h, 0);
-	hr = SE(length != INVALID_FILE_SIZE);
+	LARGE_INTEGER length64{};
+	hr = SE(GetFileSizeEx(h, &length64));
+	if (sizeof(size_t) == 4 && length64.HighPart > 0)
+		hr = E_OUTOFMEMORY;
+	size_t length = static_cast<size_t>(length64.QuadPart);
 	if (hr == S_OK)
 	{
 		if (void *buffer = GetBuffer(length))
 		{
-			DWORD cb = 0;
-			hr = SE(ReadFile(h, buffer, length, &cb, 0) && cb == length);
+			size_t pos = 0;
+			while (pos < length && SUCCEEDED(hr))
+			{
+				DWORD cb = 0;
+				hr = SE(ReadFile(h, reinterpret_cast<BYTE *>(buffer) + pos, 
+					(length - pos) < 0x10000000 ?  static_cast<DWORD>(length - pos) : 0x10000000,
+					&cb, 0));
+				pos += cb;
+			}
 			if (hr != S_OK)
 				GetBuffer(0);
 		}
@@ -305,7 +314,7 @@ HRESULT CHexMergeView::LoadFile(LPCTSTR path)
 /**
  * @brief Save file
  */
-HRESULT CHexMergeView::SaveFile(LPCTSTR path, bool packing)
+HRESULT CHexMergeView::SaveFile(const tchar_t* path, bool packing)
 {
 	// Warn user in case file has been changed by someone else
 	if (IsFileChangedOnDisk(path) == IMergeDoc::FileChange::Changed)
@@ -333,15 +342,21 @@ HRESULT CHexMergeView::SaveFile(LPCTSTR path, bool packing)
 	HRESULT hr = SE(h != INVALID_HANDLE_VALUE);
 	if (h == INVALID_HANDLE_VALUE)
 		return hr;
-	DWORD length = GetLength();
+	size_t length = GetLength();
 	void *buffer = GetBuffer(length);
 	if (buffer == 0)
 	{
 		CloseHandle(h);
 		return E_POINTER;
 	}
-	DWORD cb = 0;
-	hr = SE(WriteFile(h, buffer, length, &cb, 0) && cb == length);
+	size_t pos = 0;
+	while (pos < length && SUCCEEDED(hr))
+	{
+		DWORD cb = 0;
+		hr = SE(WriteFile(h, reinterpret_cast<const BYTE*>(buffer) + pos,
+			length - pos < 0x10000000 ? static_cast<DWORD>(length - pos) : 0x10000000, &cb, 0));
+		pos += cb;
+	}
 	CloseHandle(h);
 	if (hr != S_OK)
 		return hr;
@@ -517,6 +532,11 @@ void CHexMergeView::OnEditPaste()
 void CHexMergeView::OnEditSelectAll()
 {
 	m_pif->CMD_select_all();
+}
+
+void CHexMergeView::OnEditGoto()
+{
+	m_pif->CMD_goto();
 }
 
 /**

@@ -162,6 +162,7 @@ namespace
 		{ OPT_TAB_SIZE, varprop::VT_INT, {1, 2, 4, 8, 128}, {} },
 		{ OPT_TAB_TYPE, varprop::VT_INT, {0, 1}, {} },
 		{ OPT_WORDWRAP, varprop::VT_BOOL, {}, {} },
+		{ OPT_WORDWRAP_TABLE, varprop::VT_BOOL, {}, {} },
 		{ OPT_VIEW_LINENUMBERS, varprop::VT_BOOL, {}, {} },
 		{ OPT_VIEW_FILEMARGIN, varprop::VT_BOOL, {}, {} },
 		{ OPT_DIFF_CONTEXT, varprop::VT_INT, {0, 1, 3, 5, 7, 9}, {} },
@@ -198,6 +199,7 @@ namespace
 		{ OPT_CUSTOM_TEMP_PATH, varprop::VT_STRING, {}, {L"", L"c:\\tmp"}},
 		{ OPT_SPLIT_HORIZONTALLY, varprop::VT_BOOL, {}, {}},
 		{ OPT_FILE_SIZE_THRESHOLD, varprop::VT_INT, {0xffff, 0x7fffffff}, {}},
+		{ OPT_AUTO_RELOAD_MODIFIED_FILES, varprop::VT_INT, {0, 2}, {}},
 		//
 		{ OPT_DIRCLR_USE_COLORS, varprop::VT_BOOL, {}, {}},
 		{ OPT_COLOR_SCHEME, varprop::VT_STRING, {}, {L"", L"Default", L"Modern", L"Solarized Dark", L"Solarized Light"}},

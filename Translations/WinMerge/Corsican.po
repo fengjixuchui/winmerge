@@ -4,12 +4,14 @@
 # Maintainer:
 # * Patriccollu di Santa Maria è Sichè <patriccollu at gmail.com>
 #
+# Translators:
+# * Patriccollu di Santa Maria è Sichè, 2021-2023
 msgid ""
 msgstr ""
 "Project-Id-Version: WinMerge in Corsican\n"
 "Report-Msgid-Bugs-To: https://bugs.winmerge.org/\n"
-"POT-Creation-Date: 2022-07-10 10:12+0000\n"
-"PO-Revision-Date: 2022-08-07 12:46+0200\n"
+"POT-Creation-Date: 2022-12-25 15:41+0000\n"
+"PO-Revision-Date: 2023-01-16 17:47+0100\n"
 "Last-Translator: Patriccollu di Santa Maria è Sichè <https://github.com/Patriccollu/Lingua_Corsa-Infurmatica/#readme>\n"
 "Language-Team: Patriccollu di Santa Maria è Sichè\n"
 "Language: co\n"
@@ -18,7 +20,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: ../../Src\n"
-"X-Generator: Poedit 3.0\n"
+"X-Poedit-Language: Corsican\n"
+"X-Generator: Poedit 3.2.2\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. LANGUAGE, SUBLANGUAGE
@@ -68,7 +71,7 @@ msgid "Add this change to Substitution &Filters"
 msgstr "Aghjunghje stu cambiamentu à i &filtri di sustituzione"
 
 msgid "Add to &Line Filters"
-msgstr ""
+msgstr "Aghjunghje à i filtri di &linea"
 
 msgid "&Undo"
 msgstr "&Disfà"
@@ -421,7 +424,7 @@ msgid "Ri&ght Read-only"
 msgstr "Schedariu à &diritta in lettura sola"
 
 msgid "&File Encoding..."
-msgstr "Cudifica&zione di schedariu…"
+msgstr "Cudi&ficazione di schedariu…"
 
 msgid "Select &All\tCtrl+A"
 msgstr "T&uttu selezziunà\tCtrl+A"
@@ -505,7 +508,7 @@ msgid "Refresh\tF5"
 msgstr "&Attualizà\tF5"
 
 msgid "&Refresh Selected\tCtrl+F5"
-msgstr "Attualizà a &selezzione\tCtrl+F5"
+msgstr "Attuali&zà a selezzione\tCtrl+F5"
 
 msgid "&Merge"
 msgstr "&Fusione"
@@ -823,7 +826,7 @@ msgid "Compare in new &window"
 msgstr "Paragunà in una nova &finestra"
 
 msgid "Compare Non-hor&izontally..."
-msgstr "Paragunà micca or&izuntalmente…"
+msgstr "Paragunà micca &orizuntalmente…"
 
 msgid "Compare Non-hor&izontally"
 msgstr "Paragunà micca or&izuntalmente"
@@ -841,7 +844,7 @@ msgid "&Second left item with first right item"
 msgstr "&Secondu elementu à manca cù primu elementu à diritta"
 
 msgid "Co&mpare As"
-msgstr "Para&gunà cum’è"
+msgstr "Paragunà cum’&è"
 
 #, c-format
 msgid "Left to Middle (%1 of %2)"
@@ -892,19 +895,19 @@ msgid "Re&name"
 msgstr "Ri&numinà"
 
 msgid "&Hide Items"
-msgstr "&Piattà l’elementi"
+msgstr "Piattà &l’elementi"
 
 msgid "&Open Left"
 msgstr "&Apre à manca"
 
 msgid "Open Midd&le"
-msgstr "Ap&re à u centru"
+msgstr "Apre à u c&entru"
 
 msgid "O&pen Right"
-msgstr "A&pre à diritta"
+msgstr "Apre à d&iritta"
 
 msgid "Cop&y Pathnames"
-msgstr "&Cupià i nomi di chjassu"
+msgstr "Cupià i nomi di c&hjassu"
 
 #, c-format
 msgid "Left (%1 of %2)"
@@ -927,13 +930,16 @@ msgid "All (%1 of %2)"
 msgstr "Tutti (%1 nant’à %2)"
 
 msgid "Copy &Filenames"
-msgstr "Cupià i nomi di &schedariu"
+msgstr "Cupià i nomi di scheda&riu"
 
 msgid "Copy Items To Clip&board"
-msgstr "Cupià l’&elementi in u preme’papei"
+msgstr "Cupià l’ele&menti in u preme’papei"
+
+msgid "Copy All Di&splayed Columns"
+msgstr "Cupià &tutte e culonne affissate"
 
 msgid "&Zip"
-msgstr "Cumpri&me"
+msgstr "C&umprime"
 
 #, c-format
 msgid "Both to... (%1 of %2)"
@@ -968,8 +974,8 @@ msgstr "Cupià u nome di &schedariu"
 msgid "&Edit Caption"
 msgstr "&Mudificà a legenda"
 
-msgid "&Select..."
-msgstr "&Selezziunà…"
+msgid "&Open..."
+msgstr "A&pre…"
 
 msgid "Unpacker Settings"
 msgstr "Preferenze di u spacchittadore"
@@ -979,6 +985,9 @@ msgstr "<nisunu>"
 
 msgid "<Automatic>"
 msgstr "<autumaticu>"
+
+msgid "&Select..."
+msgstr "&Selezziunà…"
 
 msgid "Prediffer Settings"
 msgstr "Preferenze di u preparagone"
@@ -1103,6 +1112,9 @@ msgstr "Na&vigà…"
 msgid " Folder: Filter"
 msgstr " Cartulare : Filtru"
 
+msgid " File: Prediffer Plugin"
+msgstr " Schedariu : Modulu d’estensione di u preparagone"
+
 msgid " File: Unpacker Plugin"
 msgstr " Schedariu : Modulu d’estensione di u spacchittadore"
 
@@ -1150,6 +1162,9 @@ msgstr "Chjode a finestra « Selezziunà schedarii o cartulari » cù u button
 
 msgid "Op&en-dialog Auto-Completion:"
 msgstr "&Empiimentu autumaticu di a finestra d’apertura :"
+
+msgid "Auto-&reload modified files:"
+msgstr "&Ricaricà autumaticamente i schedarii mudificati :"
 
 msgid "Language:"
 msgstr "Lingua :"
@@ -1920,11 +1935,14 @@ msgstr "Integrazione à u listinu cuntestuale"
 msgid "Explorer"
 msgstr "Espluratore"
 
+msgid "&Add to context menu"
+msgstr "&Aghjunghje à u listinu cuntestuale"
+
 msgid "E&nable advanced menu"
 msgstr "Attivà u listinu &espertu"
 
-msgid "&Add to context menu"
-msgstr "&Aghjunghje à u listinu cuntestuale"
+msgid "Enable &Compare As menu"
+msgstr ""
 
 msgid "&Register shell extension"
 msgstr "A&rregistramentu di l’estensione Shell"
@@ -1969,12 +1987,8 @@ msgstr "Sogliu per passà à u paragone &rapidu (Mo) :"
 msgid "Threshold for switching to &binary compare (MB):"
 msgstr "Sogliu per passà à u paragone &binariu (Mo) :"
 
-msgid ""
-"\n"
-"&Number of compare threads (a negative value implies addition of the number of available CPU cores):"
-msgstr ""
-"\n"
-"Numeru d’unità d’esecuzione impiegate per u paragone (impiegate un valore nigativu per aghjunghje u numeru di cori CPU dispunibule) :"
+msgid "&Number of CPU cores to use:"
+msgstr "&Numeru di cori CPU à impiegà :"
 
 msgid "&CSV File Patterns:"
 msgstr "Mudelli di schedariu &CSV :"
@@ -2857,7 +2871,7 @@ msgid "You are about to close the window that is comparing folders. Are you sure
 msgstr "State per chjode a finestra chì paraguneghja i cartulari. Da veru vulete chjode a finestra ?"
 
 msgid "The file or folder name is invalid."
-msgstr ""
+msgstr "U nome di u schedariu o di u cartulare hè inaccettevule."
 
 #, c-format
 msgid "Failed to execute external editor: %1"
@@ -3766,6 +3780,9 @@ msgstr "&Attivà a larghezza massima autumatica"
 msgid "We&bpage"
 msgstr "Pagina we&b"
 
+msgid "W&rap Text"
+msgstr ""
+
 msgid "Frhed is not installed."
 msgstr "Frhed ùn hè micca installatu."
 
@@ -3965,6 +3982,12 @@ msgstr "Permette l’esecuzione d’una instanza unica di u prugramma"
 msgid "Allow only one instance to run and wait for the instance to terminate"
 msgstr "Permette l’esecuzione d’una instanza unica di u prugramma è aspettà ch’ella si compii"
 
+msgid "Only on window activated"
+msgstr "Solu quandu a finestra hè attivata"
+
+msgid "Immediately"
+msgstr "Subitu subitu"
+
 msgid "Al&l"
 msgstr "T&utti"
 
@@ -3974,8 +3997,8 @@ msgstr "Imbellimentu"
 msgid "Content Extraction"
 msgstr "Estrazzione di cuntenutu"
 
-msgid "Visualization"
-msgstr "Visualisazione"
+msgid "Preview"
+msgstr "Fighjulata"
 
 msgid "Data Query"
 msgstr "Interrugazione di dati"
@@ -4055,6 +4078,9 @@ msgstr "Ignurà i campi CSV"
 msgid "Ignore TSV Fields"
 msgstr "Ignurà i campi TSV"
 
+msgid "Ignore Leading Line Numbers"
+msgstr ""
+
 msgid "Apply Prediff Substitution Filters"
 msgstr "Appiecà i filtri di sustituzione di preparagone"
 
@@ -4070,8 +4096,14 @@ msgstr "Imbellisce XML"
 msgid "Prettify YAML"
 msgstr "Imbellisce YAML"
 
-msgid "Visualize Graphviz"
-msgstr "Visualisazione Graphviz"
+msgid "Preview Graphviz"
+msgstr "Fighjulata Graphviz"
+
+msgid "Preview Markdown"
+msgstr "Fighjulata Markdown"
+
+msgid "Preview PlantUML"
+msgstr "Fighjulata PlantUML"
 
 msgid "Query CSV Data..."
 msgstr "Interrugazione di dati CSV…"
@@ -4238,11 +4270,25 @@ msgstr ""
 "Parametri : Filtru o ozzioni di linea di cumanda passati à a cumanda « yq »."
 
 msgid ""
-"Graphviz Visualizer. \r\n"
+"Graphviz Previewer. \r\n"
 "Arguments: Command line options passed to the dot command."
 msgstr ""
-"Visualisazione Graphviz. \\r\n"
+"Previsualizatore Graphviz.\r\n"
 "Parametri : Ozzioni di linea di cumanda passate à a cumanda « dot »."
+
+msgid ""
+"Markdown Previewer. \r\n"
+"Arguments: Command line options passed to the md2html command."
+msgstr ""
+"Previsualizatore Markdown.\r\n"
+"Parametri : Ozzioni di linea di cumanda passate à a cumanda « md2html »"
+
+msgid ""
+"PlantUML Previewer. \r\n"
+"Arguments: Command line options passed to the plantuml.jar command."
+msgstr ""
+"Previsualizatore PlantUML.\r\n"
+"Parametri : Ozzioni di linea di cumanda passate à a cumanda « plantuml.jar »"
 
 msgid ""
 "CSV Querier with q command. \r\n"
