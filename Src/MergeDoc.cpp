@@ -23,7 +23,7 @@
 #include "MergeEditView.h"
 #include "MergeEditFrm.h"
 #include "DirDoc.h"
-#include "files.h"
+#include "FileLoadResult.h"
 #include "FileTransform.h"
 #include "Plugins.h"
 #include "unicoder.h"
@@ -46,7 +46,6 @@
 #include "EncodingErrorBar.h"
 #include "MergeCmdLineInfo.h"
 #include "TFile.h"
-#include "Constants.h"
 #include "Merge7zFormatMergePluginImpl.h"
 #include "7zCommon.h"
 #include "PatchTool.h"
@@ -1211,7 +1210,7 @@ bool CMergeDoc::SanityCheckDiff(const DIFFRANGE& dr) const
 
 		// Optimization - check last line first so we don't need to
 		// check whole diff for obvious cases
-		DWORD dwFlags = m_ptBuf[nBuffer]->GetLineFlags(cd_dend);
+		lineflags_t dwFlags = m_ptBuf[nBuffer]->GetLineFlags(cd_dend);
 		if (!(dwFlags & LF_WINMERGE_FLAGS))
 			return false;
 	}
@@ -1220,7 +1219,7 @@ bool CMergeDoc::SanityCheckDiff(const DIFFRANGE& dr) const
 	{
 		for (int nBuffer = 0; nBuffer < m_nBuffers; nBuffer++)
 		{
-			DWORD dwFlags = m_ptBuf[nBuffer]->GetLineFlags(cd_dend);
+			lineflags_t dwFlags = m_ptBuf[nBuffer]->GetLineFlags(cd_dend);
 			if (!(dwFlags & LF_WINMERGE_FLAGS))
 				return false;
 		}
@@ -1502,7 +1501,7 @@ bool CMergeDoc::WordListCopy(int srcPane, int dstPane, int nDiff, int firstWordD
 	// curView is the view which is changed, so the opposite of the source view
 	dbuf.BeginUndoGroup(bGroupWithPrevious);
 
-	CString srcText, dstText;
+	String srcText, dstText;
 	CEPoint ptDstStart, ptDstEnd;
 	CEPoint ptSrcStart, ptSrcEnd;
 
@@ -1536,15 +1535,15 @@ bool CMergeDoc::WordListCopy(int srcPane, int dstPane, int nDiff, int firstWordD
 		int srcEnd   = nSrcOffsets[worddiffs[i].endline[srcPane] - ptSrcStart.y] + worddiffs[i].end[srcPane];
 		int dstBegin = nDstOffsets[worddiffs[i].beginline[dstPane] - ptDstStart.y] + worddiffs[i].begin[dstPane];
 		int dstEnd   = nDstOffsets[worddiffs[i].endline[dstPane] - ptDstStart.y] + worddiffs[i].end[dstPane];
-		dstText = dstText.Mid(0, dstBegin - ptDstStart.x)
-		        + srcText.Mid(srcBegin - ptSrcStart.x, srcEnd - srcBegin)
-		        + dstText.Mid(dstEnd - ptDstStart.x);
+		dstText = dstText.substr(0, dstBegin - ptDstStart.x)
+		        + srcText.substr(srcBegin - ptSrcStart.x, srcEnd - srcBegin)
+		        + dstText.substr(dstEnd - ptDstStart.x);
 	}
 
 	dbuf.DeleteText(pSource, ptDstStart.y, ptDstStart.x, ptDstEnd.y, ptDstEnd.x, CE_ACTION_MERGE);
 
 	int endl,endc;
-	dbuf.InsertText(pSource, ptDstStart.y, ptDstStart.x, dstText, dstText.GetLength(), endl, endc, CE_ACTION_MERGE);
+	dbuf.InsertText(pSource, ptDstStart.y, ptDstStart.x, dstText.c_str(), dstText.length(), endl, endc, CE_ACTION_MERGE);
 
 	dbuf.FlushUndoGroup(pSource);
 
@@ -3654,7 +3653,7 @@ void CMergeDoc::OnOpenWithUnpacker()
 
 	PackingInfo infoUnpacker(dlg.GetPluginPipeline());
 	PathContext paths = m_filePaths;
-	DWORD dwFlags[3] = { FFILEOPEN_NOMRU, FFILEOPEN_NOMRU, FFILEOPEN_NOMRU };
+	fileopenflags_t dwFlags[3] = { FFILEOPEN_NOMRU, FFILEOPEN_NOMRU, FFILEOPEN_NOMRU };
 	String strDesc[3] = { m_strDesc[0], m_strDesc[1], m_strDesc[2] };
 	int nID = m_ptBuf[0]->GetTableEditing() ? ID_MERGE_COMPARE_TABLE : ID_MERGE_COMPARE_TEXT;
 	nID = GetOptionsMgr()->GetBool(OPT_PLUGINS_OPEN_IN_SAME_FRAME_TYPE) ? nID : -nID;
@@ -3874,7 +3873,7 @@ void CMergeDoc::OnFileRecompareAs(UINT nID)
 	if (!PromptAndSaveIfNeeded(true))
 		return;
 	
-	DWORD dwFlags[3] = { 0 };
+	fileopenflags_t dwFlags[3] = { 0 };
 	PathContext paths = m_filePaths;
 	String strDesc[3];
 	PackingInfo infoUnpacker(m_infoUnpacker.GetPluginPipeline());
@@ -4027,7 +4026,7 @@ bool CMergeDoc::GenerateReport(const String& sFileName) const
 				// line number
 				int iVisibleLineNumber = 0;
 				String tdtag = _T("<td class=\"ln\">");
-				DWORD dwFlags = m_ptBuf[nBuffer]->GetLineFlags(idx[nBuffer]);
+				lineflags_t dwFlags = m_ptBuf[nBuffer]->GetLineFlags(idx[nBuffer]);
 				if ((dwFlags & LF_GHOST) == 0 && m_pView[0][nBuffer]->GetViewLineNumbers())
 				{
 					iVisibleLineNumber = m_ptBuf[nBuffer]->ComputeRealLine(idx[nBuffer]) + 1;

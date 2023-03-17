@@ -1307,7 +1307,7 @@ void CDirView::OpenParentDirectory(CDirDoc *pDocOpen)
 		pDoc->m_pTempPathContext = pDoc->m_pTempPathContext->DeleteHead();
 		[[fallthrough]];
 	case AllowUpwardDirectory::ParentIsRegularPath: 
-		DWORD dwFlags[3];
+		fileopenflags_t dwFlags[3];
 		for (int nIndex = 0; nIndex < pathsParent.GetSize(); ++nIndex)
 			dwFlags[nIndex] = FFILEOPEN_NOMRU | (pDoc->GetReadOnly(nIndex) ? FFILEOPEN_READONLY : 0);
 		GetMainFrame()->DoFileOrFolderOpen(&pathsParent, dwFlags, nullptr, _T(""), GetDiffContext().m_bRecursive, (GetAsyncKeyState(VK_CONTROL) & 0x8000) ? nullptr : pDocOpen);
@@ -1391,7 +1391,7 @@ static bool CreateFoldersPair(const PathContext& paths)
 	return created;
 }
 
-void CDirView::Open(CDirDoc *pDoc, const PathContext& paths, DWORD dwFlags[3], FileTextEncoding encoding[3], PackingInfo * infoUnpacker)
+void CDirView::Open(CDirDoc *pDoc, const PathContext& paths, fileopenflags_t dwFlags[3], FileTextEncoding encoding[3], PackingInfo * infoUnpacker)
 {
 	bool isdir = false;
 	for (auto path : paths)
@@ -1527,7 +1527,7 @@ void CDirView::OpenSelection(CDirDoc *pDoc, SELECTIONTYPE selectionType /*= SELE
 	// Now pathLeft, pathRight, di1, di2, and isdir are all set
 	// We have two items to compare, no matter whether same or different underlying DirView item
 
-	DWORD dwFlags[3];
+	fileopenflags_t dwFlags[3];
 	for (int nIndex = 0; nIndex < paths.GetSize(); nIndex++)
 		dwFlags[nIndex] = FFILEOPEN_NOMRU | (GetDocument()->GetReadOnly(nPane[nIndex]) ? FFILEOPEN_READONLY : 0);
 
@@ -1601,7 +1601,7 @@ void CDirView::OpenSelectionAs(UINT id)
 
 	// Open identical and different files
 	const String sUntitled[] = { _("Untitled left"), paths.GetSize() < 3 ? _("Untitled right") : _("Untitled middle"), _("Untitled right") };
-	DWORD dwFlags[3] = { 0 };
+	fileopenflags_t dwFlags[3] = { 0 };
 	String strDesc[3];
 	PathContext filteredPaths;
 	FileLocation fileloc[3];
@@ -3492,6 +3492,13 @@ afx_msg void CDirView::OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 		CEdit *pEdit = m_pList->GetEditControl();
 		ASSERT(pEdit != nullptr);
 		pEdit->SetWindowText(sText);
+		// Select file name without file extension
+		if (!GetDiffItem(pdi->item.iItem).diffcode.isDirectory())
+		{
+			int nPosExt = sText.ReverseFind('.');
+			if (nPosExt >= 1)
+				pEdit->SetSel(0, nPosExt);
+		}
 
 		m_bUserCancelEdit = false;
 	}
@@ -3957,7 +3964,7 @@ void CDirView::OnMergeCompareNonHorizontally()
 	{
 		CDirDoc *pDoc = GetDocument();
 		FileTextEncoding encoding[3];
-		DWORD dwFlags[3] = {};
+		fileopenflags_t dwFlags[3] = {};
 		PathContext paths;
 		for (int nIndex = 0; nIndex < static_cast<int>(dlg.m_selectedButtons.size()); ++nIndex)
 		{

@@ -137,8 +137,6 @@ RecalcPoint (CEPoint & ptPoint)
 /////////////////////////////////////////////////////////////////////////////
 // CCrystalTextBuffer
 
-IMPLEMENT_DYNCREATE (CCrystalTextBuffer, CCmdTarget)
-
 CCrystalTextBuffer::CCrystalTextBuffer ()
 {
   m_bInit = false;
@@ -171,13 +169,6 @@ CCrystalTextBuffer:: ~ CCrystalTextBuffer ()
 {
   ASSERT (!m_bInit);            //  You must call FreeAll() before deleting the object
 }
-
-
-BEGIN_MESSAGE_MAP (CCrystalTextBuffer, CCmdTarget)
-//{{AFX_MSG_MAP(CCrystalTextBuffer)
-//}}AFX_MSG_MAP
-END_MESSAGE_MAP ()
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CCrystalTextBuffer message handlers
@@ -262,12 +253,12 @@ void CCrystalTextBuffer::MoveLine(int line1, int line2, int newline1)
   if (ldiff > 0)
     {
       for (int l = line2; l >= line1; l--)
-        m_aLines[l+ldiff] = m_aLines[l];
+        m_aLines[l+ldiff] = std::move(m_aLines[l]);
     }
   else if (ldiff < 0)
     {
       for (int l = line1; l <= line2; l++)
-        m_aLines[l+ldiff] = m_aLines[l];
+        m_aLines[l+ldiff] = std::move(m_aLines[l]);
     }
 }
 
@@ -897,7 +888,7 @@ SetLineFlag (int nLine, lineflags_t dwFlag, bool bSet, bool bRemoveFromPreviousL
 void CCrystalTextBuffer::			/* virtual base */
 GetTextWithoutEmptys(int nStartLine, int nStartChar, 
                  int nEndLine, int nEndChar, 
-                 CString &text, CRLFSTYLE nCrlfStyle /*= CRLFSTYLE::AUTOMATIC */,
+                 std::basic_string<tchar_t>& text, CRLFSTYLE nCrlfStyle /*= CRLFSTYLE::AUTOMATIC */,
                  bool bExcludeInvisibleLines/*= true*/) const
 {
   GetText(nStartLine, nStartChar, nEndLine, nEndChar, text, (nCrlfStyle == CRLFSTYLE::AUTOMATIC) ? nullptr : GetStringEol (nCrlfStyle), bExcludeInvisibleLines);
@@ -906,7 +897,7 @@ GetTextWithoutEmptys(int nStartLine, int nStartChar,
 
 void CCrystalTextBuffer::
 GetText (int nStartLine, int nStartChar, int nEndLine, int nEndChar,
-         CString & text, const tchar_t* pszCRLF /*= nullptr*/, bool bExcludeInvisibleLines/*= true*/) const
+         std::basic_string<tchar_t>& text, const tchar_t* pszCRLF /*= nullptr*/, bool bExcludeInvisibleLines/*= true*/) const
 {
   ASSERT (m_bInit);             //  Text buffer not yet initialized.
   //  You must call InitNew() or LoadFromFile() first!
@@ -935,7 +926,8 @@ GetText (int nStartLine, int nStartChar, int nEndLine, int nEndChar,
       nBufSize += nCRLFLength;
     }
 
-  tchar_t* pszBuf = text.GetBuffer (static_cast<int>(nBufSize));
+  text.resize (nBufSize);
+  tchar_t* pszBuf = text.data ();
 
   const LineInfo &startLine = m_aLines[nStartLine];
   if (nStartLine < nEndLine)
@@ -980,56 +972,38 @@ GetText (int nStartLine, int nStartChar, int nEndLine, int nEndChar,
       memcpy (pszBuf, startLine.GetLine(nStartChar), sizeof (tchar_t) * nCount);
       pszBuf += nCount;
     }
-  text.ReleaseBuffer ((int) (pszBuf - text));
-  text.FreeExtra ();
+  text.resize (pszBuf - text.data ());
 }
 
 void CCrystalTextBuffer::
 AddView (CCrystalTextView * pView)
 {
-  m_lpViews.AddTail (pView);
+  m_lpViews.push_back (pView);
 }
 
 void CCrystalTextBuffer::
 RemoveView (CCrystalTextView * pView)
 {
-  POSITION pos = m_lpViews.GetHeadPosition ();
-  while (pos != nullptr)
-    {
-      POSITION thispos = pos;
-      CCrystalTextView *pvw = m_lpViews.GetNext (pos);
-      if (pvw == pView)
-        {
-          m_lpViews.RemoveAt (thispos);
-          return;
-        }
-    }
-  ASSERT (false);
+  auto it = std::find (m_lpViews.begin (), m_lpViews.end (), pView);
+  if (it != m_lpViews.end ())
+      m_lpViews.erase (it);
 }
 
 CrystalLineParser::TextDefinition *CCrystalTextBuffer::
 RetypeViews (const tchar_t* lpszFileName)
 {
-  POSITION pos = m_lpViews.GetHeadPosition ();
-  CString sNew = GetExt (lpszFileName);
-  CrystalLineParser::TextDefinition *def = CrystalLineParser::GetTextType (sNew);
-  while (pos != nullptr)
-    {
-      CCrystalTextView *pView = m_lpViews.GetNext (pos);
-      pView->SetTextType (def);
-    }
+  std::basic_string<tchar_t> sNew = GetExt (lpszFileName);
+  CrystalLineParser::TextDefinition *def = CrystalLineParser::GetTextType (sNew.c_str ());
+  for (auto* pView : m_lpViews)
+    pView->SetTextType (def);
   return def;
 }
 
 void CCrystalTextBuffer::
 UpdateViews (CCrystalTextView * pSource, CUpdateContext * pContext, DWORD dwUpdateFlags, int nLineIndex /*= -1*/ )
 {
-  POSITION pos = m_lpViews.GetHeadPosition ();
-  while (pos != nullptr)
-    {
-      CCrystalTextView *pView = m_lpViews.GetNext (pos);
-      pView->UpdateView (pSource, pContext, dwUpdateFlags, nLineIndex);
-    }
+  for (auto* pView : m_lpViews)
+    pView->UpdateView (pSource, pContext, dwUpdateFlags, nLineIndex);
 }
 
 /**
@@ -1080,7 +1054,7 @@ InternalDeleteText (CCrystalTextView * pSource, int nStartLine, int nStartChar,
     {
       // delete multiple lines
       const ptrdiff_t nRestCount = m_aLines[nEndLine].FullLength() - nEndChar;
-      CString sTail(m_aLines[nEndLine].GetLine(nEndChar), static_cast<int>(nRestCount));
+      std::basic_string<tchar_t> sTail(m_aLines[nEndLine].GetLine(nEndChar), static_cast<int>(nRestCount));
       lineflags_t dwFlags = GetLineFlags (nEndLine);
 
       const int nDelCount = nEndLine - nStartLine;
@@ -1094,7 +1068,7 @@ InternalDeleteText (CCrystalTextView * pSource, int nStartLine, int nStartChar,
       m_aLines[nStartLine].DeleteEnd(nStartChar);
       if (nRestCount > 0)
         {
-          AppendLine (nStartLine, sTail, sTail.GetLength());
+          AppendLine (nStartLine, sTail.c_str (), sTail.length ());
         }
       if (nStartChar == 0)
         m_aLines[nStartLine].m_dwFlags = dwFlags;
@@ -1115,7 +1089,7 @@ InternalDeleteText (CCrystalTextView * pSource, int nStartLine, int nStartChar,
 
 // Remove the last [bytes] characters from specified line, and return them
 // (EOL characters are included)
-CString CCrystalTextBuffer::
+std::basic_string<tchar_t> CCrystalTextBuffer::
 StripTail (int i, size_t bytes)
 {
   LineInfo & li = m_aLines[i];
@@ -1126,7 +1100,7 @@ StripTail (int i, size_t bytes)
   // Must not take off more than exist
   ASSERT(offset >= 0);
 
-  CString ret(li.GetLine(offset), static_cast<int>(bytes));
+  std::basic_string<tchar_t> ret(li.GetLine(offset), static_cast<int>(bytes));
   li.DeleteEnd(offset);
   return ret;
 }
@@ -1167,7 +1141,7 @@ InternalInsertText (CCrystalTextView * pSource, int nLine, int nPos,
   nEndChar = 0;
 
   int nRestCount = GetFullLineLength(nLine) - nPos;
-  CString sTail;
+  std::basic_string<tchar_t> sTail;
   if (nRestCount > 0)
     {
       // remove end of line (we'll put it back on afterwards)
@@ -1243,15 +1217,15 @@ InternalInsertText (CCrystalTextView * pSource, int nLine, int nPos,
               nEndLine = nCurrentLine;
               nEndChar = GetFullLineLength(nEndLine);
             }
-          if (!sTail.IsEmpty())
+          if (!sTail.empty())
             {
               if (haseol)
                 {
-                  InsertLine(sTail, sTail.GetLength(), nEndLine);
+                  InsertLine(sTail.c_str (), sTail.length (), nEndLine);
                   nInsertedLines ++;
                 }
               else
-                AppendLine (nEndLine, sTail, nRestCount);
+                AppendLine (nEndLine, sTail.c_str (), nRestCount);
             }
           if (nEndLine == GetLineCount())
             {
@@ -1319,22 +1293,22 @@ CanRedo () const
   return m_nUndoPosition < static_cast<int>(m_aUndoBuf.size ());
 }
 
-POSITION CCrystalTextBuffer::
-GetUndoActionCode (int & nAction, POSITION pos /*= nullptr*/ ) const
+size_t CCrystalTextBuffer::
+GetUndoActionCode (int & nAction, size_t pos /*= 0*/ ) const
 {
   ASSERT (CanUndo ());          //  Please call CanUndo() first
 
   ASSERT ((m_aUndoBuf[0].m_dwFlags & UNDO_BEGINGROUP) != 0);
 
   intptr_t nPosition;
-  if (pos == nullptr)
+  if (pos == 0)
     {
       //  Start from beginning
       nPosition = m_nUndoPosition;
     }
   else
     {
-      nPosition = reinterpret_cast<intptr_t>(pos);
+      nPosition = static_cast<intptr_t>(pos);
       ASSERT (nPosition > 0 && nPosition < m_nUndoPosition);
       ASSERT ((m_aUndoBuf[nPosition].m_dwFlags & UNDO_BEGINGROUP) != 0);
     }
@@ -1352,12 +1326,12 @@ GetUndoActionCode (int & nAction, POSITION pos /*= nullptr*/ ) const
   nAction = (*iter).m_nAction;
 
   //  Now, if we stop at zero position, this will be the last action,
-  //  since we return (POSITION) nPosition
-  return (POSITION) nPosition;
+  //  since we return (size_t) nPosition
+  return (size_t) nPosition;
 }
 
-POSITION CCrystalTextBuffer::
-GetRedoActionCode (int & nAction, POSITION pos /*= nullptr*/ ) const
+size_t CCrystalTextBuffer::
+GetRedoActionCode (int & nAction, size_t pos /*= 0*/ ) const
 {
   ASSERT (CanRedo ());          //  Please call CanRedo() before!
 
@@ -1365,14 +1339,14 @@ GetRedoActionCode (int & nAction, POSITION pos /*= nullptr*/ ) const
   ASSERT ((m_aUndoBuf[m_nUndoPosition].m_dwFlags & UNDO_BEGINGROUP) != 0);
 
   intptr_t nPosition;
-  if (pos == nullptr)
+  if (pos == 0)
     {
       //  Start from beginning
       nPosition = m_nUndoPosition;
     }
   else
     {
-      nPosition = reinterpret_cast<intptr_t>(pos);
+      nPosition = static_cast<intptr_t>(pos);
       ASSERT (nPosition > m_nUndoPosition);
       ASSERT ((m_aUndoBuf[nPosition].m_dwFlags & UNDO_BEGINGROUP) != 0);
     }
@@ -1392,33 +1366,33 @@ GetRedoActionCode (int & nAction, POSITION pos /*= nullptr*/ ) const
         }
     }
   if (nPosition >= static_cast<intptr_t>(m_aUndoBuf.size ()))
-    return nullptr;                //  No more redo actions!
+    return 0;                //  No more redo actions!
 
-  return (POSITION) nPosition;
+  return (size_t) nPosition;
 }
 
-POSITION CCrystalTextBuffer::
-GetUndoDescription (CString & desc, POSITION pos /*= nullptr*/ ) const
+size_t CCrystalTextBuffer::
+GetUndoDescription (std::basic_string<tchar_t>& desc, size_t pos /*= 0*/ ) const
 {
   int nAction;
-  POSITION retValue = GetUndoActionCode(nAction, pos);
+  size_t retValue = GetUndoActionCode(nAction, pos);
 
   //  Read description
   if (!GetActionDescription (nAction, desc))
-    desc.Empty ();              //  Use empty string as description
+    desc.clear ();              //  Use empty string as description
 
   return retValue;
 }
 
-POSITION CCrystalTextBuffer::
-GetRedoDescription (CString & desc, POSITION pos /*= nullptr*/ ) const
+size_t CCrystalTextBuffer::
+GetRedoDescription (std::basic_string<tchar_t>& desc, size_t pos /*= 0*/ ) const
 {
   int nAction;
-  POSITION retValue = GetRedoActionCode(nAction, pos);
+  size_t retValue = GetRedoActionCode(nAction, pos);
 
   //  Read description
   if (!GetActionDescription (nAction, desc))
-    desc.Empty ();              //  Use empty string as description
+    desc.clear ();              //  Use empty string as description
 
   return retValue;
 }
@@ -1548,9 +1522,9 @@ Redo (CCrystalTextView * pSource, CEPoint & ptCursorPos)
           if (apparent_ptStartPos != apparent_ptEndPos)
             {
 #ifdef _DEBUG
-              CString text;
+              std::basic_string<tchar_t> text;
               GetTextWithoutEmptys (apparent_ptStartPos.y, apparent_ptStartPos.x, apparent_ptEndPos.y, apparent_ptEndPos.x, text, CRLFSTYLE::AUTOMATIC, false);
-              ASSERT (static_cast<size_t>(text.GetLength()) == ur.GetTextLength() && memcmp(text, ur.GetText(), text.GetLength() * sizeof(tchar_t)) == 0);
+              ASSERT (text.length () == ur.GetTextLength() && memcmp(text.c_str (), ur.GetText(), text.length () * sizeof(tchar_t)) == 0);
 #endif
               VERIFY(DeleteText(pSource, apparent_ptStartPos.y, apparent_ptStartPos.x, 
                 apparent_ptEndPos.y, apparent_ptEndPos.x, 0, false, false));
@@ -1798,7 +1772,7 @@ bool CCrystalTextBuffer::			/* virtual base */
 DeleteText2 (CCrystalTextView * pSource, int nStartLine, int nStartChar,
             int nEndLine, int nEndChar, int nAction /* = CE_ACTION_UNKNOWN*/, bool bHistory /*= true*/)
 {
-  CString sTextToDelete;
+  std::basic_string<tchar_t> sTextToDelete;
   GetTextWithoutEmptys (nStartLine, nStartChar, nEndLine, nEndChar, sTextToDelete);
 
   // save line revision numbers for undo
@@ -1821,86 +1795,77 @@ DeleteText2 (CCrystalTextView * pSource, int nStartLine, int nStartChar,
     }
 
   AddUndoRecord (false, CEPoint (nStartChar, nStartLine), CEPoint (nEndChar, nEndLine),
-                 sTextToDelete, sTextToDelete.GetLength(), nAction, paSavedRevisionNumbers);
+                 sTextToDelete.c_str (), sTextToDelete.length (), nAction, paSavedRevisionNumbers);
 
   return true;
 }
 
 bool CCrystalTextBuffer::
-GetActionDescription (int nAction, CString & desc) const
+GetActionDescription (int nAction, std::basic_string<tchar_t>& desc) const
 {
-  HINSTANCE hOldResHandle = AfxGetResourceHandle ();
-#ifdef CRYSEDIT_RES_HANDLE
-  AfxSetResourceHandle (CRYSEDIT_RES_HANDLE);
-#else
-  if (CCrystalTextView::s_hResourceInst != nullptr)
-    AfxSetResourceHandle (CCrystalTextView::s_hResourceInst);
-#endif
-  bool bSuccess = false;
   switch (nAction)
     {
     case CE_ACTION_PASTE:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_PASTE);
+      desc = _T ("Paste");
       break;
     case CE_ACTION_DELSEL:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_DELSELECTION);
+      desc = _T ("Delete Selection");
       break;
     case CE_ACTION_CUT:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_CUT);
+      desc = _T ("Cut");
       break;
     case CE_ACTION_TYPING:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_TYPING);
+      desc = _T ("Typing");
       break;
     case CE_ACTION_BACKSPACE:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_BACKSPACE);
+      desc = _T ("Backspace");
       break;
     case CE_ACTION_INDENT:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_INDENT);
+      desc = _T ("Indent");
       break;
     case CE_ACTION_DRAGDROP:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_DRAGDROP);
+      desc = _T ("Drag And Drop");
       break;
     case CE_ACTION_REPLACE:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_REPLACE);
+      desc = _T ("Replace");
       break;
     case CE_ACTION_DELETE:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_DELETE);
+      desc = _T ("Delete");
       break;
     case CE_ACTION_AUTOINDENT:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_AUTOINDENT);
+      desc = _T ("Auto Indent");
       break;
     case CE_ACTION_AUTOCOMPLETE:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_AUTOCOMPLETE);
+      desc = _T ("Auto Complete");
       break;
     case CE_ACTION_AUTOEXPAND:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_AUTOEXPAND);
+      desc = _T ("Auto Expand");
       break;
     case CE_ACTION_LOWERCASE:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_LOWERCASE);
+      desc = _T ("Lower Case");
       break;
     case CE_ACTION_UPPERCASE:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_UPPERCASE);
+      desc = _T ("Upper Case");
       break;
     case CE_ACTION_SWAPCASE:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_SWAPCASE);
+      desc = _T ("Swap Case");
       break;
     case CE_ACTION_CAPITALIZE:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_CAPITALIZE);
+      desc = _T ("Capitalize");
       break;
     case CE_ACTION_SENTENCIZE:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_SENTENCIZE);
+      desc = _T ("Sentencize");
       break;
     case CE_ACTION_RECODE:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_RECODE);
+      desc = _T ("Recode");
       break;
     case CE_ACTION_SPELL:
-      bSuccess = !!desc.LoadString (IDS_EDITOP_SPELL);
+      desc = _T ("Spell");
       break;
     default: /* case CE_ACTION_UNKNOWN: */
-      bSuccess = !!desc.LoadString (IDS_EDITOP_UNKNOWN);
+      desc = _T ("Unknown");
     }
-  AfxSetResourceHandle (hOldResHandle);
-  return bSuccess;
+  return true;
 }
 
 void CCrystalTextBuffer::			/* virtual base */
@@ -2067,10 +2032,10 @@ int CCrystalTextBuffer::GetColumnCount (int nLineIndex) const
   return nColumnCount;
 }
 
-CString CCrystalTextBuffer::GetCellText (int nLineIndex, int nColumnIndex) const
+std::basic_string<tchar_t> CCrystalTextBuffer::GetCellText (int nLineIndex, int nColumnIndex) const
 {
   ASSERT( nLineIndex >= 0 && nColumnIndex >= 0 && GetTableEditing() );
-  CString sText;
+  std::basic_string<tchar_t> sText;
   int nColumnCount = 0;
   const tchar_t* pszLine = GetLineChars (nLineIndex);
   int nLength = GetLineLength (nLineIndex);
@@ -2156,10 +2121,8 @@ InvalidateColumns ()
 {
   for (auto& buf : m_pSharedTableProps->m_textBufferList)
     {
-      POSITION pos = buf->m_lpViews.GetHeadPosition ();
-      while (pos != nullptr)
+      for (auto* pView : buf->m_lpViews)
         {
-          CCrystalTextView* pView = buf->m_lpViews.GetNext (pos);
           pView->InvalidateScreenRect ();
           pView->UpdateView (nullptr, nullptr, UPDATE_HORZRANGE | UPDATE_VERTRANGE, -1);
         }

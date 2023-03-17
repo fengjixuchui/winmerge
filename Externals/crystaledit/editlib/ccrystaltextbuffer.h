@@ -37,11 +37,7 @@
 #include "cepoint.h"
 #include <memory>
 #include <vector>
-
-#ifndef __AFXTEMPL_H__
-#pragma message("Include <afxtempl.h> in your stdafx.h to avoid this message")
-#include <afxtempl.h>
-#endif
+#include <list>
 
 class CCrystalTextView;
 
@@ -107,11 +103,9 @@ public :
 /////////////////////////////////////////////////////////////////////////////
 // CCrystalTextBuffer command target
 
-class EDITPADC_CLASS CCrystalTextBuffer : public CCmdTarget
+class EDITPADC_CLASS CCrystalTextBuffer
   {
 public:
-    DECLARE_DYNCREATE (CCrystalTextBuffer)
-
     int m_nSourceEncoding;
     static int m_nDefaultEncoding;
     uint32_t m_dwCurrentRevisionNumber;
@@ -165,7 +159,7 @@ public :
     //END SW
 
     //  Connected views
-    CList < CCrystalTextView *, CCrystalTextView * >m_lpViews;
+    std::list < CCrystalTextView * > m_lpViews;
 
     // Table Editing
     bool m_bTableEditing;
@@ -188,7 +182,7 @@ public :
     //  Implementation
     bool InternalInsertText (CCrystalTextView * pSource, int nLine, int nPos, const tchar_t* pszText, size_t cchText, int &nEndLine, int &nEndChar);
     bool InternalDeleteText (CCrystalTextView * pSource, int nStartLine, int nStartPos, int nEndLine, int nEndPos);
-    CString StripTail (int i, size_t bytes);
+    std::basic_string<tchar_t> StripTail (int i, size_t bytes);
 
     //  [JRT] Support For Descriptions On Undo/Redo Actions
     virtual void AddUndoRecord (bool bInsert, const CEPoint & ptStartPos, const CEPoint & ptEndPos,
@@ -199,7 +193,7 @@ public :
     virtual void RestoreRevisionNumbers(int nStartLine, std::vector<uint32_t> *psaSavedRevisionNumbers);
 
     //  Overridable: provide action description
-    virtual bool GetActionDescription (int nAction, CString & desc) const;
+    virtual bool GetActionDescription (int nAction, std::basic_string<tchar_t>& desc) const;
 
     // Operations
 public :
@@ -244,9 +238,9 @@ public :
     void SetLineFlag (int nLine, lineflags_t dwFlag, bool bSet,
             bool bRemoveFromPreviousLine = true, bool bUpdate=true);
     void GetText (int nStartLine, int nStartChar, int nEndLine, int nEndChar,
-            CString & text, const tchar_t* pszCRLF = nullptr, bool bExcludeInvisibleLines = true) const;
+            std::basic_string<tchar_t>& text, const tchar_t* pszCRLF = nullptr, bool bExcludeInvisibleLines = true) const;
     virtual void GetTextWithoutEmptys (int nStartLine, int nStartChar,
-            int nEndLine, int nEndChar, CString &text,
+            int nEndLine, int nEndChar, std::basic_string<tchar_t>& text,
             CRLFSTYLE nCrlfStyle = CRLFSTYLE::AUTOMATIC, bool bExcludeInvisibleLines = true) const;
     virtual bool IsIndentableLine(int nLine) const { return true; }
 
@@ -289,10 +283,10 @@ public :
 
 
     //  Browse undo sequence
-    POSITION GetUndoActionCode (int & nAction, POSITION pos = nullptr) const;
-    POSITION GetRedoActionCode (int & nAction, POSITION pos = nullptr) const;
-    POSITION GetUndoDescription (CString & desc, POSITION pos = nullptr) const;
-    POSITION GetRedoDescription (CString & desc, POSITION pos = nullptr) const;
+    size_t GetUndoActionCode (int & nAction, size_t pos = 0) const;
+    size_t GetRedoActionCode (int & nAction, size_t pos = 0) const;
+    size_t GetUndoDescription (std::basic_string<tchar_t>& desc, size_t pos = 0) const;
+    size_t GetRedoDescription (std::basic_string<tchar_t>& desc, size_t pos = 0) const;
 
     //  Notify all connected views about changes in name of file
     CrystalLineParser::TextDefinition *RetypeViews (const tchar_t* lpszFileName);
@@ -321,7 +315,7 @@ public :
     const std::vector<int>& GetColumnWidths () const { return m_pSharedTableProps->m_aColumnWidths; }
     void SetColumnWidths (const std::vector<int>& columnWidths);
     int  GetColumnCount (int nLineIndex) const;
-    CString GetCellText (int nLineIndex, int nColumnIndex) const;
+    std::basic_string<tchar_t> GetCellText (int nLineIndex, int nColumnIndex) const;
     void SetAllowNewlinesInQuotes (bool bAllowNewlinesInQuotes) { m_bAllowNewlinesInQuotes = bAllowNewlinesInQuotes; }
     tchar_t GetAllowNewlinesInQuotes () const { return m_bAllowNewlinesInQuotes; }
     void SetFieldDelimiter (tchar_t cFieldDelimiter) { m_cFieldDelimiter = cFieldDelimiter; }
@@ -343,13 +337,6 @@ public :
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CCrystalTextBuffer)
     //}}AFX_VIRTUAL
-
-
-    // Generated message map functions
-    //{{AFX_MSG(CCrystalTextBuffer)
-    //}}AFX_MSG
-
-    DECLARE_MESSAGE_MAP ()
   };
 
 

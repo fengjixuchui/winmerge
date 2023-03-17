@@ -39,9 +39,6 @@ enum GHOST_LINEFLAGS
  */
 class EDITPADC_CLASS CGhostTextBuffer : public CCrystalTextBuffer
 {
-public:
-	DECLARE_DYNCREATE (CGhostTextBuffer)
-
 private:
 	/**
 	 * @brief A struct mapping real lines and apparent (screen) lines.
@@ -73,7 +70,7 @@ public :
 	or if it adds the default EOL)
 	*/
 	virtual void GetTextWithoutEmptys (int nStartLine, int nStartChar,
-			int nEndLine, int nEndChar, CString &text,
+			int nEndLine, int nEndChar, String &text,
 			CRLFSTYLE nCrlfStyle =CRLFSTYLE::AUTOMATIC,
 			bool bExcludeInvisibleLines = true) const override;
 
@@ -139,10 +136,4 @@ protected:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CCrystalTextBuffer)
 	//}}AFX_VIRTUAL
-
-	// Generated message map functions
-	//{{AFX_MSG(CCrystalTextBuffer)
-	//}}AFX_MSG
-
-	DECLARE_MESSAGE_MAP ()
 };
